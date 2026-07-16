@@ -187,6 +187,41 @@ body { background: var(--bg); color: var(--ink); font-family: Georgia, serif; }
 .card h3 { font-size: 1rem; font-weight: 400; margin-bottom: 0.4rem; }
 .card p  { font-family: system-ui, sans-serif; font-size: 0.78rem; line-height: 1.6; opacity: 0.6; }
 
+.section-heading {
+  font-size: clamp(0.85rem, 1.5vw, 1rem); font-weight: 400;
+  letter-spacing: 0.04em; margin-bottom: 0.4rem; margin-top: 2rem;
+}
+.section-note {
+  font-family: system-ui, sans-serif; font-size: 0.6rem;
+  letter-spacing: 0.1em; opacity: 0.42; margin-bottom: 1rem;
+}
+.tarif-note {
+  font-family: system-ui, sans-serif; font-size: 0.58rem;
+  letter-spacing: 0.06em; opacity: 0.4; margin-top: 0.8rem; margin-bottom: 0.5rem;
+}
+.cards-4 { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+.card-price {
+  font-family: system-ui, sans-serif; font-size: 0.65rem;
+  margin-top: 0.6rem; opacity: 0.6; letter-spacing: 0.04em;
+}
+.amenities-row {
+  display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 2rem;
+}
+.amenity {
+  font-family: system-ui, sans-serif; font-size: 0.58rem;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  border: 1px solid color-mix(in srgb, var(--ink) 18%, transparent);
+  padding: 0.3rem 0.65rem; opacity: 0.65;
+}
+.contact-row {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1.5rem; margin-bottom: 2rem;
+}
+.contact-detail {
+  font-family: system-ui, sans-serif; font-size: 0.75rem;
+  line-height: 1.7; opacity: 0.65;
+}
+.contact-detail a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
 .cta-link {
   display: inline-block;
   font-family: system-ui, sans-serif; font-size: 0.62rem;
@@ -536,33 +571,81 @@ body { background: var(--bg); color: var(--ink); font-family: Georgia, serif; }
     <div class="back-row">
       <button class="back-btn" onclick="goBack()">&#8592;&ensp;Retour</button>
     </div>
-    <p class="content-eyebrow">Domaine viticole</p>
+    <p class="content-eyebrow">Domaine viticole · Loire Valley</p>
     <h1 class="content-title wine-color">Les Vins</h1>
     <p class="content-lead">
-      Le Château de Fontenay cultive ses vignes en Bourgogne depuis plusieurs siècles.
-      Chaque millésime exprime la singularité du terroir — sols argilo-calcaires, expositions
-      soignées, vendanges manuelles — pour des vins d'une précision rare.
+      Le Château de Fontenay cultive 15 hectares de vignes en bord de Cher, en agriculture raisonnée.
+      Le domaine produit des vins sous deux appellations — AOP Touraine et AOP Touraine Chenonceaux —
+      laissant s'exprimer un terroir à la fois riche d'histoire et fertile.
     </p>
     <hr class="divider-rule">
+
+    <p class="section-heading">Nos blancs</p>
     <div class="cards">
       <div class="card">
-        <p class="card-label">Appellation</p>
-        <h3>Bourgogne Rouge</h3>
-        <p>Pinot Noir élégant aux notes de fruits rouges et d'épices douces. Introduction parfaite au domaine.</p>
+        <p class="card-label">AOP Touraine Chenonceaux</p>
+        <h3>Blanc Sec</h3>
+        <p>Sauvignon Blanc issu des rives du Cher. Fraîcheur aromatique, notes d'agrumes et de fleurs blanches. À boire jeune ou à garder 3–5 ans.</p>
       </div>
       <div class="card">
-        <p class="card-label">Appellation</p>
-        <h3>Côte de Nuits</h3>
-        <p>Complexité aromatique, structure tannique veloutée et longue finale. Le cœur de la collection.</p>
-      </div>
-      <div class="card">
-        <p class="card-label">Appellation</p>
-        <h3>Cuvée Prestige</h3>
-        <p>Sélection parcellaire en vieilles vignes. Élevage en fûts de chêne, garde conseillée 10 à 15 ans.</p>
+        <p class="card-label">AOP Touraine</p>
+        <h3>Blanc de Terroir</h3>
+        <p>Expression pure du sol argilo-siliceux. Vinification en cuve pour préserver la minéralité et la vivacité du cépage.</p>
       </div>
     </div>
-    <a href="https://www.lechateaudefontenay.fr/vins/" target="_blank" class="cta-link wine-link">
-      Découvrir tous les vins &rarr;
+
+    <p class="section-heading">Nos rouges</p>
+    <div class="cards">
+      <div class="card">
+        <p class="card-label">AOP Touraine Chenonceaux</p>
+        <h3>Rouge de Garde</h3>
+        <p>Côt (Malbec) et Cabernet Franc assemblés. Robe grenat profonde, tanins fondus, notes de fruits noirs et d'épices. Garde 5–8 ans.</p>
+      </div>
+      <div class="card">
+        <p class="card-label">AOP Touraine</p>
+        <h3>Rouge Tradition</h3>
+        <p>Gamay et Côt en assemblage souple et fruité. Idéal sur une cuisine de terroir, à servir légèrement frais.</p>
+      </div>
+    </div>
+
+    <p class="section-heading">Nos rosés</p>
+    <div class="cards">
+      <div class="card">
+        <p class="card-label">AOP Touraine</p>
+        <h3>Rosé de Printemps</h3>
+        <p>Saignée de Gamay et Côt. Robe saumonée, arômes de fraise et de pêche blanche. Fraîcheur idéale pour l'été en bord de Cher.</p>
+      </div>
+    </div>
+
+    <p class="section-heading">Nos méthodes traditionnelles</p>
+    <div class="cards">
+      <div class="card">
+        <p class="card-label">Méthode Traditionnelle</p>
+        <h3>Pétillant Blanc</h3>
+        <p>Élaboré selon la méthode traditionnelle, avec seconde fermentation en bouteille. Bulles fines, bel équilibre entre fraîcheur et rondeur.</p>
+      </div>
+      <div class="card">
+        <p class="card-label">Méthode Traditionnelle</p>
+        <h3>Pétillant Rosé</h3>
+        <p>Robe or rosé, bulles persistantes, nez de petits fruits rouges. Parfait à l'apéritif ou pour accompagner un dessert fruité.</p>
+      </div>
+    </div>
+
+    <hr class="divider-rule">
+    <div class="contact-row">
+      <div>
+        <p class="card-label">Commander &amp; déguster</p>
+        <p class="contact-detail">Vente directe au domaine — sur rendez-vous</p>
+        <p class="contact-detail">5, Fontenay · 37150 Bléré</p>
+      </div>
+      <div>
+        <p class="card-label">Contact</p>
+        <p class="contact-detail"><a href="mailto:vin@lechateaudefontenay.fr">vin@lechateaudefontenay.fr</a></p>
+        <p class="contact-detail">02 47 57 12 74</p>
+      </div>
+    </div>
+    <a href="https://www.lechateaudefontenay.fr/vin/" target="_blank" class="cta-link wine-link">
+      Découvrir la boutique en ligne &rarr;
     </a>
   </div>
 </div>
@@ -574,33 +657,90 @@ body { background: var(--bg); color: var(--ink); font-family: Georgia, serif; }
     <div class="back-row">
       <button class="back-btn" onclick="goBack()">&#8592;&ensp;Retour</button>
     </div>
-    <p class="content-eyebrow">Maison d'hôtes</p>
+    <p class="content-eyebrow">Chambres d'hôtes &amp; Gîtes ★★★★ · Bléré</p>
     <h1 class="content-title stay-color">Séjourner</h1>
     <p class="content-lead">
-      Au cœur de la Bourgogne, le Château de Fontenay ouvre ses portes pour des séjours d'exception.
-      Chambres et suites finement décorées, parc à la française, petit-déjeuner servi en salle
-      d'apparat — le temps d'un week-end ou d'une semaine.
+      Au cœur de la Vallée de la Loire, à 6&nbsp;km du château de Chenonceau et à 10&nbsp;minutes d'Amboise,
+      le Château de Fontenay propose quatre chambres d'hôtes dans le château et trois gîtes au cœur du parc.
+      Petit-déjeuner maison inclus pour les chambres — œufs de nos poules et confitures de Nathalie.
     </p>
     <hr class="divider-rule">
-    <div class="cards">
+
+    <p class="section-heading">Chambres d'hôtes</p>
+    <p class="section-note">Au 1<sup>er</sup> étage du château · Vue sur le Cher · Petit-déjeuner inclus</p>
+    <div class="cards cards-4">
       <div class="card">
         <p class="card-label">Chambre</p>
-        <h3>Chambre Classique</h3>
-        <p>Vue sur le parc, mobilier d'époque restauré, salle de bain en marbre. Petit-déjeuner inclus.</p>
+        <h3>Les Vignes</h3>
+        <p>Vue panoramique sur les vignes et le Cher. Atmosphère douce et lumineuse.</p>
+        <p class="card-price">À partir de 112&nbsp;€ / nuit</p>
       </div>
       <div class="card">
-        <p class="card-label">Suite</p>
-        <h3>Suite Fontenay</h3>
-        <p>Salon attenant, baldaquin, vue sur les vignes. L'expérience complète du château privé.</p>
+        <p class="card-label">Chambre</p>
+        <h3>Le Cher</h3>
+        <p>Nommée en hommage à la rivière qui longe le domaine. Décor élégant, vue imprenable.</p>
+        <p class="card-price">À partir de 135&nbsp;€ / nuit</p>
       </div>
       <div class="card">
-        <p class="card-label">Privatisation</p>
-        <h3>Le Château Entier</h3>
-        <p>Séminaires, mariages, événements familiaux. Le domaine vous appartient le temps de votre séjour.</p>
+        <p class="card-label">Chambre</p>
+        <h3>Cupidon</h3>
+        <p>Romantique et intime, cette chambre invite à la sérénité au cœur du parc du château.</p>
+        <p class="card-price">À partir de 135&nbsp;€ / nuit</p>
+      </div>
+      <div class="card">
+        <p class="card-label">Chambre</p>
+        <h3>Empire</h3>
+        <p>Style Empire, mobilier d'époque soigneusement restauré. Une expérience dans la grande histoire.</p>
+        <p class="card-price">À partir de 135&nbsp;€ / nuit</p>
       </div>
     </div>
-    <a href="https://www.lechateaudefontenay.fr/sejour/" target="_blank" class="cta-link stay-link">
-      Réserver un séjour &rarr;
+    <p class="tarif-note">Lit supplémentaire : 30&nbsp;€ · Taxe de séjour : 0,70&nbsp;€/nuit/adulte · Tarifs variables selon saison</p>
+
+    <p class="section-heading">Gîtes</p>
+    <p class="section-note">Dans le parc du domaine · 4 étoiles · Indépendants &amp; tout équipés</p>
+    <div class="cards">
+      <div class="card">
+        <p class="card-label">Gîte · 4–6 personnes</p>
+        <h3>Le Jardin</h3>
+        <p>2 chambres (lits 160×200 séparables), salon avec canapé convertible et cheminée, cuisine équipée, salle de bain. Wi-Fi, TV, lave-linge.</p>
+      </div>
+      <div class="card">
+        <p class="card-label">Gîte · 5–8 personnes</p>
+        <h3>La Maison du Boulanger</h3>
+        <p>3 chambres (1 simple + 2 doubles 160×200), 2 salles de bain, grande cuisine équipée, buanderie. Wi-Fi, TV, sèche-linge.</p>
+      </div>
+      <div class="card">
+        <p class="card-label">Gîte · 4–6 personnes</p>
+        <h3>La Closerie</h3>
+        <p>De plain-pied. 2 chambres (160×190 et 180×200), salon avec cheminée, cuisine équipée, salle de bain. Accès facilité PMR.</p>
+      </div>
+    </div>
+
+    <hr class="divider-rule">
+    <div class="amenities-row">
+      <span class="amenity">Piscine saisonnière</span>
+      <span class="amenity">Dégustations de vins</span>
+      <span class="amenity">Ateliers culinaires</span>
+      <span class="amenity">Chenonceau à 6&nbsp;km</span>
+      <span class="amenity">Amboise à 10&nbsp;min</span>
+      <span class="amenity">TGV à 30&nbsp;min</span>
+    </div>
+
+    <hr class="divider-rule">
+    <div class="contact-row">
+      <div>
+        <p class="card-label">Adresse</p>
+        <p class="contact-detail">5, Fontenay · 37150 Bléré</p>
+        <p class="contact-detail">2h de Paris via A10</p>
+      </div>
+      <div>
+        <p class="card-label">Réservations</p>
+        <p class="contact-detail"><a href="mailto:sejour@lechateaudefontenay.fr">sejour@lechateaudefontenay.fr</a></p>
+        <p class="contact-detail">02 47 57 12 74</p>
+      </div>
+    </div>
+    <a href="https://lechateaudefontenay.fr/sejour" target="_blank" class="cta-link stay-link">
+      Voir les disponibilités &rarr;
     </a>
   </div>
 </div>
