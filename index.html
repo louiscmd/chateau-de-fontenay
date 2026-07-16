@@ -18,594 +18,622 @@
 :root[data-theme="light"] { --bg:#FAFAF8; --ink:#1A1816; --stone:#EDEAE3; --stone-dk:#D4CFC5; }
 :root[data-theme="dark"]  { --bg:#141311; --ink:#E8E4DD; --stone:#252219; --stone-dk:#1E1C17; }
 
-html { scroll-behavior: auto; }
-body { background: var(--bg); color: var(--ink); font-family: Georgia, serif; overflow-x: hidden; }
+html, body { height: 100%; overflow: hidden; }
+body { background: var(--bg); color: var(--ink); font-family: Georgia, serif; }
 
-.scroll-driver { height: 500vh; position: relative; }
-.sticky-scene  { position: sticky; top: 0; height: 100vh; width: 100%; overflow: hidden; }
+/* ══ SCENES ══ */
+.scene {
+  position: fixed; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  transition: opacity 0.55s ease;
+}
+.scene.hidden { opacity: 0; pointer-events: none; }
 
-/* ── HEADER ── */
-.castle-header {
-  position: absolute; top: 0; left: 0; right: 0;
+/* ══ ENTRY SCENE ══ */
+#entry {
+  cursor: pointer;
+  -webkit-user-select: none; user-select: none;
+}
+#entry:hover .click-cue { opacity: 0.55; }
+
+.entry-header {
   display: flex; flex-direction: column; align-items: center;
-  padding-top: clamp(1.6rem, 4vh, 3.2rem);
-  z-index: 10; pointer-events: none; text-align: center;
+  position: absolute; top: 0; left: 0; right: 0;
+  padding-top: clamp(1.4rem, 3.5vh, 2.8rem);
+  text-align: center; pointer-events: none;
+  transition: opacity 0.4s;
 }
 .eyebrow {
-  font-family: system-ui, sans-serif; font-size: 0.66rem;
-  letter-spacing: 0.28em; text-transform: uppercase; opacity: 0.38;
-  margin-bottom: 0.9rem;
+  font-family: system-ui, sans-serif; font-size: 0.64rem;
+  letter-spacing: 0.28em; text-transform: uppercase; opacity: 0.36;
+  margin-bottom: 0.75rem;
 }
 .castle-title {
-  font-size: clamp(1.8rem, 4.8vw, 4rem); font-weight: 400;
-  line-height: 1.05; letter-spacing: -0.01em; text-wrap: balance;
+  font-size: clamp(1.6rem, 4vw, 3.5rem); font-weight: 400;
+  line-height: 1.04; letter-spacing: -0.01em;
 }
-.scroll-cue {
-  font-family: system-ui, sans-serif; font-size: 0.62rem;
-  letter-spacing: 0.26em; text-transform: uppercase; opacity: 0.32;
-  margin-top: 1.6rem; animation: nudge 2.8s ease-in-out infinite;
+.click-cue {
+  position: absolute; bottom: clamp(1.5rem, 4vh, 3rem); left: 0; right: 0;
+  font-family: system-ui, sans-serif; font-size: 0.6rem;
+  letter-spacing: 0.26em; text-transform: uppercase;
+  opacity: 0.3; text-align: center;
+  transition: opacity 0.3s; animation: pulse 3s ease-in-out infinite;
 }
-@keyframes nudge {
-  0%,100% { transform: translateY(0); opacity:.32; }
-  50%      { transform: translateY(5px); opacity:.55; }
+@keyframes pulse {
+  0%,100% { opacity: .28; } 50% { opacity: .5; }
 }
 
-/* ── CASTLE ── */
 .castle-wrap {
   position: absolute; inset: 0;
   display: flex; align-items: flex-end; justify-content: center;
-  will-change: opacity;
+  overflow: hidden;
 }
 .castle-svg {
   width: min(98vw, 1100px); height: auto; display: block;
   transform-origin: 50% 90%;
-  will-change: transform;
+  transition: transform 1.5s cubic-bezier(0.4, 0, 0.1, 1),
+              opacity  0.5s ease 1.1s;
+}
+.castle-svg.zooming {
+  transform: scale(16);
+  opacity: 0;
 }
 
-/* ── INTERIOR ── */
-.interior {
-  position: absolute; inset: 0; opacity: 0; pointer-events: none;
-  display: flex; flex-direction: column; align-items: center;
-  justify-content: center; background: var(--bg); z-index: 20;
-  gap: 0;
-}
+/* ══ PICKER SCENE ══ */
+#picker { background: var(--bg); }
 
-.choice-intro {
-  font-family: system-ui, sans-serif; font-size: 0.6rem;
-  letter-spacing: 0.28em; text-transform: uppercase; opacity: 0.32;
-  margin-bottom: 2.8rem; text-align: center;
+.picker-label {
+  font-family: system-ui, sans-serif; font-size: 0.58rem;
+  letter-spacing: 0.3em; text-transform: uppercase; opacity: 0.3;
+  margin-bottom: 2.6rem;
 }
 
 .choices {
   display: grid; grid-template-columns: 1fr 1px 1fr;
-  width: min(80vw, 700px);
+  width: min(80vw, 680px);
 }
-.divider-line { background: var(--ink); opacity: 0.12; }
+.divider-line { background: var(--ink); opacity: 0.1; }
 
-.choice-card {
+.choice-btn {
   display: flex; flex-direction: column; align-items: center;
-  justify-content: center; padding: 2.6rem 1.8rem 2.2rem;
-  text-decoration: none; color: var(--ink);
-  border-top: 1px solid color-mix(in srgb, var(--ink) 18%, transparent);
-  transition: background 0.3s; cursor: pointer;
+  justify-content: center; padding: 2.4rem 2rem 2rem;
+  border: none; background: none; color: var(--ink);
+  font-family: Georgia, serif; cursor: pointer;
+  border-top: 1px solid color-mix(in srgb, var(--ink) 15%, transparent);
+  transition: background 0.3s;
 }
-.choice-card:hover { background: color-mix(in srgb, var(--ink) 4%, transparent); }
-.choice-card.wine:hover { background: color-mix(in srgb, var(--wine) 6%, var(--bg)); }
-.choice-card.stay:hover { background: color-mix(in srgb, var(--ivy) 6%, var(--bg)); }
+.choice-btn:hover { background: color-mix(in srgb, var(--ink) 4%, transparent); }
+.choice-btn.wine:hover { background: color-mix(in srgb, var(--wine) 6%, var(--bg)); }
+.choice-btn.stay:hover { background: color-mix(in srgb, var(--ivy) 6%, var(--bg)); }
 
 .choice-icon {
-  width: 40px; height: 52px; margin-bottom: 1.1rem;
-  transition: transform 0.3s ease;
+  width: 38px; height: 50px; margin-bottom: 1rem;
+  transition: transform 0.3s; color: var(--ink);
 }
-.choice-card:hover .choice-icon { transform: translateY(-3px); }
+.choice-btn:hover .choice-icon { transform: translateY(-3px); }
 
-.choice-card h2 {
-  font-size: clamp(1.1rem, 2.2vw, 1.45rem); font-weight: 400;
-  letter-spacing: 0.03em; margin-bottom: 0.35rem;
+.choice-btn h2 {
+  font-size: clamp(1rem, 2vw, 1.35rem); font-weight: 400;
+  letter-spacing: 0.02em; margin-bottom: 0.3rem;
 }
-.choice-card.wine:hover h2 { color: var(--wine); }
-.choice-card.stay:hover h2 { color: var(--ivy); }
-.choice-card p {
-  font-family: system-ui, sans-serif; font-size: 0.6rem;
-  letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.38; text-align: center;
+.choice-btn.wine:hover h2 { color: var(--wine); }
+.choice-btn.stay:hover h2 { color: var(--ivy); }
+.choice-btn p {
+  font-family: system-ui, sans-serif; font-size: 0.58rem;
+  letter-spacing: 0.13em; text-transform: uppercase; opacity: 0.35;
 }
 
+/* ══ CONTENT SCENES ══ */
+#wine-scene, #stay-scene {
+  background: var(--bg);
+  overflow-y: auto; -webkit-overflow-scrolling: touch;
+  align-items: flex-start; justify-content: flex-start;
+}
+
+.content-inner {
+  width: min(88vw, 780px); margin: 0 auto;
+  padding: clamp(3rem, 8vh, 6rem) 0 clamp(3rem, 6vh, 5rem);
+}
+
+.back-row {
+  display: flex; align-items: center; gap: 0.6rem;
+  margin-bottom: 3rem;
+}
 .back-btn {
-  position: fixed; top: 1.3rem; left: 1.3rem; z-index: 100;
-  font-family: system-ui, sans-serif; font-size: 0.6rem;
-  letter-spacing: 0.18em; text-transform: uppercase;
-  background: none; border: 1px solid currentColor;
-  color: var(--ink); opacity: 0; padding: 0.42rem 0.85rem;
-  cursor: pointer; pointer-events: none; transition: opacity 0.3s, background 0.2s;
+  font-family: system-ui, sans-serif; font-size: 0.58rem;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  background: none; border: 1px solid color-mix(in srgb, var(--ink) 25%, transparent);
+  color: var(--ink); padding: 0.4rem 0.8rem; cursor: pointer;
+  transition: background 0.2s;
 }
 .back-btn:hover { background: var(--stone); }
 
+.content-eyebrow {
+  font-family: system-ui, sans-serif; font-size: 0.6rem;
+  letter-spacing: 0.28em; text-transform: uppercase;
+  opacity: 0.35; margin-bottom: 1rem;
+}
+.content-title {
+  font-size: clamp(2rem, 5vw, 3.8rem); font-weight: 400;
+  line-height: 1.05; margin-bottom: 1.6rem; letter-spacing: -0.015em;
+}
+.content-title.wine-color { color: var(--wine); }
+.content-title.stay-color { color: var(--ivy); }
+
+.content-lead {
+  font-size: clamp(0.95rem, 1.8vw, 1.1rem); line-height: 1.75;
+  opacity: 0.75; max-width: 58ch; margin-bottom: 3rem;
+}
+
+.divider-rule {
+  border: none; border-top: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
+  margin-bottom: 2.8rem;
+}
+
+.cards {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1px; background: color-mix(in srgb, var(--ink) 10%, transparent);
+  margin-bottom: 2.8rem;
+}
+.card {
+  background: var(--bg); padding: 1.6rem 1.4rem;
+}
+.card-label {
+  font-family: system-ui, sans-serif; font-size: 0.56rem;
+  letter-spacing: 0.24em; text-transform: uppercase; opacity: 0.35;
+  margin-bottom: 0.5rem;
+}
+.card h3 { font-size: 1rem; font-weight: 400; margin-bottom: 0.4rem; }
+.card p  { font-family: system-ui, sans-serif; font-size: 0.78rem; line-height: 1.6; opacity: 0.6; }
+
+.cta-link {
+  display: inline-block;
+  font-family: system-ui, sans-serif; font-size: 0.62rem;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--ink); text-decoration: none;
+  border-bottom: 1px solid currentColor; padding-bottom: 0.15rem;
+  transition: opacity 0.2s;
+}
+.cta-link:hover { opacity: 0.55; }
+.cta-link.wine-link { color: var(--wine); }
+.cta-link.stay-link { color: var(--ivy); }
+
 @media (prefers-reduced-motion: reduce) {
   .castle-svg { transition: none; }
-  .scroll-cue { animation: none; }
+  .click-cue { animation: none; }
 }
 @media (max-width: 520px) {
   .choices { grid-template-columns: 1fr; }
-  .divider-line { height: 1px; width: 50%; margin: 0 auto; }
+  .divider-line { height: 1px; width: 40%; margin: 0 auto; }
+  .cards { grid-template-columns: 1fr; }
 }
 </style>
 
-<div class="scroll-driver" id="driver">
-  <div class="sticky-scene" id="scene">
+<!-- ══════════ ENTRY SCENE ══════════ -->
+<div class="scene" id="entry" onclick="enter()">
 
-    <header class="castle-header" id="hdr">
-      <p class="eyebrow">Bourgogne &middot; France</p>
-      <h1 class="castle-title">Château<br>de Fontenay</h1>
-      <p class="scroll-cue">&#8595;&ensp;Entrez</p>
-    </header>
+  <header class="entry-header" id="entryHeader">
+    <p class="eyebrow">Bourgogne &middot; France</p>
+    <h1 class="castle-title">Château<br>de Fontenay</h1>
+  </header>
 
-    <div class="castle-wrap" id="castleWrap">
-      <svg class="castle-svg" id="castleSvg" viewBox="0 0 1000 690"
-           xmlns="http://www.w3.org/2000/svg" fill="none">
-        <defs>
-          <!-- Slate tile pattern for mansard roofs -->
-          <pattern id="slate" x="0" y="0" width="18" height="11" patternUnits="userSpaceOnUse">
-            <line x1="0" y1="5.5" x2="18" y2="5.5" stroke="var(--ink)" stroke-width="0.55" opacity="0.35"/>
-            <line x1="9" y1="0" x2="9" y2="5.5" stroke="var(--ink)" stroke-width="0.35" opacity="0.2"/>
-            <line x1="0" y1="0" x2="0" y2="5.5" stroke="var(--ink)" stroke-width="0.35" opacity="0.2"/>
-          </pattern>
-          <pattern id="slate-sp" x="0" y="0" width="14" height="10" patternUnits="userSpaceOnUse">
-            <line x1="0" y1="5" x2="14" y2="5" stroke="var(--ink)" stroke-width="0.5" opacity="0.3"/>
-          </pattern>
-          <clipPath id="lmansard-clip">
-            <polygon points="46,344 390,344 384,135 52,135"/>
-          </clipPath>
-          <clipPath id="rmansard-clip">
-            <polygon points="610,344 954,344 948,135 616,135"/>
-          </clipPath>
-          <clipPath id="spire-clip">
-            <polygon points="500,5 408,122 592,122"/>
-          </clipPath>
-        </defs>
+  <div class="castle-wrap">
+    <svg class="castle-svg" id="castleSvg" viewBox="0 0 1000 690"
+         xmlns="http://www.w3.org/2000/svg" fill="none">
+      <defs>
+        <pattern id="slate" x="0" y="0" width="18" height="11" patternUnits="userSpaceOnUse">
+          <line x1="0" y1="5.5" x2="18" y2="5.5" stroke="var(--ink)" stroke-width="0.55" opacity="0.35"/>
+          <line x1="9" y1="0" x2="9" y2="5.5" stroke="var(--ink)" stroke-width="0.35" opacity="0.2"/>
+          <line x1="0" y1="0" x2="0" y2="5.5" stroke="var(--ink)" stroke-width="0.35" opacity="0.2"/>
+        </pattern>
+        <pattern id="slate-sp" x="0" y="0" width="14" height="10" patternUnits="userSpaceOnUse">
+          <line x1="0" y1="5" x2="14" y2="5" stroke="var(--ink)" stroke-width="0.5" opacity="0.3"/>
+        </pattern>
+        <clipPath id="lmansard-clip">
+          <polygon points="46,344 390,344 384,135 52,135"/>
+        </clipPath>
+        <clipPath id="rmansard-clip">
+          <polygon points="610,344 954,344 948,135 616,135"/>
+        </clipPath>
+        <clipPath id="spire-clip">
+          <polygon points="500,5 408,122 592,122"/>
+        </clipPath>
+      </defs>
 
-        <!-- ══════════════════════════════════════
-             GROUND & BASE
-        ══════════════════════════════════════ -->
-        <line x1="0" y1="660" x2="1000" y2="660" stroke="var(--ink)" stroke-width="1.5"/>
-        <rect x="46" y="643" width="908" height="17" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.5" stroke-linejoin="round"/>
+      <line x1="0" y1="660" x2="1000" y2="660" stroke="var(--ink)" stroke-width="1.5"/>
+      <rect x="46" y="643" width="908" height="17" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.5" stroke-linejoin="round"/>
 
-        <!-- ══════════════════════════════════════
-             LEFT WING BODY
-        ══════════════════════════════════════ -->
-        <rect x="48" y="340" width="340" height="303" fill="var(--stone)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/>
-        <!-- String course between floors -->
-        <rect x="48" y="464" width="340" height="7" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1"/>
-        <!-- Base string -->
-        <rect x="48" y="624" width="340" height="8" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1"/>
-        <!-- Quoin blocks left edge -->
-        <g fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="0.7">
-          <rect x="48" y="345" width="11" height="18"/>
-          <rect x="48" y="378" width="11" height="14"/>
-          <rect x="48" y="406" width="11" height="18"/>
-          <rect x="48" y="438" width="11" height="14"/>
-          <rect x="48" y="472" width="11" height="18"/>
-          <rect x="48" y="504" width="11" height="14"/>
-          <rect x="48" y="532" width="11" height="18"/>
-          <rect x="48" y="564" width="11" height="14"/>
-          <rect x="48" y="592" width="11" height="18"/>
-        </g>
+      <!-- LEFT WING -->
+      <rect x="48" y="340" width="340" height="303" fill="var(--stone)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/>
+      <rect x="48" y="464" width="340" height="7" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1"/>
+      <rect x="48" y="624" width="340" height="8" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1"/>
+      <g fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="0.7">
+        <rect x="48" y="345" width="11" height="18"/><rect x="48" y="378" width="11" height="14"/>
+        <rect x="48" y="406" width="11" height="18"/><rect x="48" y="438" width="11" height="14"/>
+        <rect x="48" y="472" width="11" height="18"/><rect x="48" y="504" width="11" height="14"/>
+        <rect x="48" y="532" width="11" height="18"/><rect x="48" y="564" width="11" height="14"/>
+        <rect x="48" y="592" width="11" height="18"/>
+      </g>
 
-        <!-- RIGHT WING BODY -->
-        <rect x="612" y="340" width="340" height="303" fill="var(--stone)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/>
-        <rect x="612" y="464" width="340" height="7" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1"/>
-        <rect x="612" y="624" width="340" height="8" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1"/>
-        <g fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="0.7">
-          <rect x="941" y="345" width="11" height="18"/>
-          <rect x="941" y="378" width="11" height="14"/>
-          <rect x="941" y="406" width="11" height="18"/>
-          <rect x="941" y="438" width="11" height="14"/>
-          <rect x="941" y="472" width="11" height="18"/>
-          <rect x="941" y="504" width="11" height="14"/>
-          <rect x="941" y="532" width="11" height="18"/>
-          <rect x="941" y="564" width="11" height="14"/>
-          <rect x="941" y="592" width="11" height="18"/>
-        </g>
+      <!-- RIGHT WING -->
+      <rect x="612" y="340" width="340" height="303" fill="var(--stone)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/>
+      <rect x="612" y="464" width="340" height="7" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1"/>
+      <rect x="612" y="624" width="340" height="8" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1"/>
+      <g fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="0.7">
+        <rect x="941" y="345" width="11" height="18"/><rect x="941" y="378" width="11" height="14"/>
+        <rect x="941" y="406" width="11" height="18"/><rect x="941" y="438" width="11" height="14"/>
+        <rect x="941" y="472" width="11" height="18"/><rect x="941" y="504" width="11" height="14"/>
+        <rect x="941" y="532" width="11" height="18"/><rect x="941" y="564" width="11" height="14"/>
+        <rect x="941" y="592" width="11" height="18"/>
+      </g>
 
-        <!-- ══════════════════════════════════════
-             CENTRAL TOWER BODY
-             Polygonal — chamfered front corners
-        ══════════════════════════════════════ -->
-        <polygon points="392,142 608,142 618,165 618,643 382,643 382,165"
-                 fill="var(--stone)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/>
-        <!-- Tower string courses -->
-        <line x1="382" y1="464" x2="618" y2="464" stroke="var(--ink)" stroke-width="1.2" opacity="0.6"/>
-        <line x1="382" y1="471" x2="618" y2="471" stroke="var(--ink)" stroke-width="0.7" opacity="0.4"/>
-        <line x1="382" y1="340" x2="618" y2="340" stroke="var(--ink)" stroke-width="1.2" opacity="0.6"/>
-        <line x1="382" y1="347" x2="618" y2="347" stroke="var(--ink)" stroke-width="0.7" opacity="0.4"/>
-        <!-- Quoins on tower -->
-        <g fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="0.7">
-          <rect x="382" y="345" width="12" height="16"/>
-          <rect x="382" y="375" width="12" height="12"/>
-          <rect x="382" y="400" width="12" height="16"/>
-          <rect x="606" y="345" width="12" height="16"/>
-          <rect x="606" y="375" width="12" height="12"/>
-          <rect x="606" y="400" width="12" height="16"/>
-        </g>
-        <!-- Tower base quoins -->
-        <g fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="0.7">
-          <rect x="382" y="480" width="12" height="16"/>
-          <rect x="382" y="510" width="12" height="12"/>
-          <rect x="382" y="535" width="12" height="16"/>
-          <rect x="382" y="568" width="12" height="12"/>
-          <rect x="382" y="592" width="12" height="16"/>
-          <rect x="606" y="480" width="12" height="16"/>
-          <rect x="606" y="510" width="12" height="12"/>
-          <rect x="606" y="535" width="12" height="16"/>
-          <rect x="606" y="568" width="12" height="12"/>
-          <rect x="606" y="592" width="12" height="16"/>
-        </g>
+      <!-- CENTRAL TOWER -->
+      <polygon points="392,142 608,142 618,165 618,643 382,643 382,165"
+               fill="var(--stone)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/>
+      <line x1="382" y1="464" x2="618" y2="464" stroke="var(--ink)" stroke-width="1.2" opacity="0.6"/>
+      <line x1="382" y1="471" x2="618" y2="471" stroke="var(--ink)" stroke-width="0.7" opacity="0.4"/>
+      <line x1="382" y1="340" x2="618" y2="340" stroke="var(--ink)" stroke-width="1.2" opacity="0.6"/>
+      <line x1="382" y1="347" x2="618" y2="347" stroke="var(--ink)" stroke-width="0.7" opacity="0.4"/>
+      <g fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="0.7">
+        <rect x="382" y="345" width="12" height="16"/><rect x="382" y="375" width="12" height="12"/>
+        <rect x="382" y="400" width="12" height="16"/><rect x="606" y="345" width="12" height="16"/>
+        <rect x="606" y="375" width="12" height="12"/><rect x="606" y="400" width="12" height="16"/>
+        <rect x="382" y="480" width="12" height="16"/><rect x="382" y="510" width="12" height="12"/>
+        <rect x="382" y="535" width="12" height="16"/><rect x="382" y="568" width="12" height="12"/>
+        <rect x="382" y="592" width="12" height="16"/><rect x="606" y="480" width="12" height="16"/>
+        <rect x="606" y="510" width="12" height="12"/><rect x="606" y="535" width="12" height="16"/>
+        <rect x="606" y="568" width="12" height="12"/><rect x="606" y="592" width="12" height="16"/>
+      </g>
 
-        <!-- ══════════════════════════════════════
-             MANSARD ROOFS (filled + slate tiles)
-        ══════════════════════════════════════ -->
-        <!-- Left wing mansard fill -->
-        <polygon points="46,344 390,344 384,135 52,135"
-                 fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/>
-        <!-- Slate tiles left -->
-        <polygon points="46,344 390,344 384,135 52,135" fill="url(#slate)" clip-path="url(#lmansard-clip)"/>
-        <!-- Right wing mansard fill -->
-        <polygon points="610,344 954,344 948,135 616,135"
-                 fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/>
-        <polygon points="610,344 954,344 948,135 616,135" fill="url(#slate)" clip-path="url(#rmansard-clip)"/>
+      <!-- LEFT MANSARD -->
+      <polygon points="46,344 390,344 384,135 52,135"
+               fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/>
+      <polygon points="46,344 390,344 384,135 52,135" fill="url(#slate)" clip-path="url(#lmansard-clip)"/>
+      <!-- RIGHT MANSARD -->
+      <polygon points="610,344 954,344 948,135 616,135"
+               fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/>
+      <polygon points="610,344 954,344 948,135 616,135" fill="url(#slate)" clip-path="url(#rmansard-clip)"/>
 
-        <!-- ══════════════════════════════════════
-             SPIRE (conical, polygonal base)
-        ══════════════════════════════════════ -->
-        <!-- Spire cone -->
-        <polygon points="500,5 408,122 592,122"
-                 fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/>
-        <!-- Slate on spire -->
-        <polygon points="500,5 408,122 592,122" fill="url(#slate-sp)" clip-path="url(#spire-clip)"/>
-        <!-- Tower collar (where spire meets tower) -->
-        <rect x="388" y="122" width="224" height="20" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.8" stroke-linejoin="round"/>
-        <!-- Collar detail -->
-        <line x1="388" y1="131" x2="612" y2="131" stroke="var(--ink)" stroke-width="0.7" opacity="0.5"/>
-        <!-- Finials at spire tip (double orb) -->
-        <line x1="497" y1="5" x2="497" y2="-8" stroke="var(--ink)" stroke-width="1.5"/>
-        <circle cx="497" cy="-8" r="3.5" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.2"/>
-        <circle cx="497" cy="0" r="2.5" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.2"/>
-        <line x1="503" y1="4" x2="503" y2="-10" stroke="var(--ink)" stroke-width="1.5"/>
-        <circle cx="503" cy="-10" r="3.5" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.2"/>
-        <circle cx="503" cy="-2" r="2.5" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.2"/>
-        <!-- Crockets on spire edges -->
-        <g fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1">
-          <ellipse cx="453" cy="64" rx="5" ry="4" transform="rotate(-28 453 64)"/>
-          <ellipse cx="427" cy="94" rx="5" ry="4" transform="rotate(-28 427 94)"/>
-          <ellipse cx="547" cy="64" rx="5" ry="4" transform="rotate(28 547 64)"/>
-          <ellipse cx="573" cy="94" rx="5" ry="4" transform="rotate(28 573 94)"/>
-        </g>
+      <!-- SPIRE -->
+      <polygon points="500,5 408,122 592,122"
+               fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/>
+      <polygon points="500,5 408,122 592,122" fill="url(#slate-sp)" clip-path="url(#spire-clip)"/>
+      <rect x="388" y="122" width="224" height="20" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.8" stroke-linejoin="round"/>
+      <line x1="388" y1="131" x2="612" y2="131" stroke="var(--ink)" stroke-width="0.7" opacity="0.5"/>
+      <line x1="497" y1="5" x2="497" y2="-8" stroke="var(--ink)" stroke-width="1.5"/>
+      <circle cx="497" cy="-8" r="3.5" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.2"/>
+      <circle cx="497" cy="0" r="2.5" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.2"/>
+      <line x1="503" y1="4" x2="503" y2="-10" stroke="var(--ink)" stroke-width="1.5"/>
+      <circle cx="503" cy="-10" r="3.5" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.2"/>
+      <circle cx="503" cy="-2" r="2.5" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.2"/>
+      <g fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1">
+        <ellipse cx="453" cy="64" rx="5" ry="4" transform="rotate(-28 453 64)"/>
+        <ellipse cx="427" cy="94" rx="5" ry="4" transform="rotate(-28 427 94)"/>
+        <ellipse cx="547" cy="64" rx="5" ry="4" transform="rotate(28 547 64)"/>
+        <ellipse cx="573" cy="94" rx="5" ry="4" transform="rotate(28 573 94)"/>
+      </g>
 
-        <!-- ══════════════════════════════════════
-             CHIMNEYS
-        ══════════════════════════════════════ -->
-        <g fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.5" stroke-linejoin="round">
-          <!-- Left wing chimneys -->
-          <rect x="100" y="88" width="22" height="55"/> <rect x="97" y="85" width="28" height="8"/>
-          <rect x="152" y="100" width="18" height="45"/> <rect x="149" y="97" width="24" height="7"/>
-          <rect x="268" y="90" width="20" height="50"/> <rect x="265" y="87" width="26" height="8"/>
-          <rect x="320" y="102" width="16" height="42"/> <rect x="317" y="99" width="22" height="7"/>
-          <!-- Right wing chimneys (mirror) -->
-          <rect x="878" y="88" width="22" height="55"/> <rect x="875" y="85" width="28" height="8"/>
-          <rect x="830" y="100" width="18" height="45"/> <rect x="827" y="97" width="24" height="7"/>
-          <rect x="712" y="90" width="20" height="50"/> <rect x="709" y="87" width="26" height="8"/>
-          <rect x="664" y="102" width="16" height="42"/> <rect x="661" y="99" width="22" height="7"/>
-        </g>
+      <!-- CHIMNEYS -->
+      <g fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.5" stroke-linejoin="round">
+        <rect x="100" y="88" width="22" height="55"/><rect x="97" y="85" width="28" height="8"/>
+        <rect x="152" y="100" width="18" height="45"/><rect x="149" y="97" width="24" height="7"/>
+        <rect x="268" y="90" width="20" height="50"/><rect x="265" y="87" width="26" height="8"/>
+        <rect x="320" y="102" width="16" height="42"/><rect x="317" y="99" width="22" height="7"/>
+        <rect x="878" y="88" width="22" height="55"/><rect x="875" y="85" width="28" height="8"/>
+        <rect x="830" y="100" width="18" height="45"/><rect x="827" y="97" width="24" height="7"/>
+        <rect x="712" y="90" width="20" height="50"/><rect x="709" y="87" width="26" height="8"/>
+        <rect x="664" y="102" width="16" height="42"/><rect x="661" y="99" width="22" height="7"/>
+      </g>
 
-        <!-- ══════════════════════════════════════
-             DORMERS — Left wing (3 Gothic)
-        ══════════════════════════════════════ -->
-        <!-- Dormer = a small gabled window jutting from the mansard -->
-        <!-- Left dormer 1 -->
-        <g>
-          <rect x="83" y="218" width="58" height="82" fill="var(--stone)" stroke="var(--ink)" stroke-width="1.5"/>
-          <polygon points="76,220 149,220 112,178" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.5" stroke-linejoin="round"/>
-          <!-- Gothic tracery in dormer -->
-          <path d="M95,298 L95,240 A17,17 0 0 0 129,240 L129,298 Z" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.2"/>
-          <line x1="112" y1="238" x2="112" y2="298" stroke="var(--ink)" stroke-width="0.8"/>
-          <!-- Cross finial -->
-          <line x1="112" y1="178" x2="112" y2="163" stroke="var(--ink)" stroke-width="1.2"/>
-          <line x1="106" y1="168" x2="118" y2="168" stroke="var(--ink)" stroke-width="1.2"/>
-        </g>
-        <!-- Left dormer 2 -->
-        <g>
-          <rect x="198" y="208" width="60" height="88" fill="var(--stone)" stroke="var(--ink)" stroke-width="1.5"/>
-          <polygon points="191,210 265,210 228,165" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.5" stroke-linejoin="round"/>
-          <path d="M210,296 L210,228 A18,18 0 0 0 246,228 L246,296 Z" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.2"/>
-          <line x1="228" y1="226" x2="228" y2="296" stroke="var(--ink)" stroke-width="0.8"/>
-          <line x1="228" y1="165" x2="228" y2="150" stroke="var(--ink)" stroke-width="1.2"/>
-          <line x1="222" y1="155" x2="234" y2="155" stroke="var(--ink)" stroke-width="1.2"/>
-        </g>
-        <!-- Left dormer 3 -->
-        <g>
-          <rect x="307" y="218" width="56" height="80" fill="var(--stone)" stroke="var(--ink)" stroke-width="1.5"/>
-          <polygon points="300,220 370,220 335,177" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.5" stroke-linejoin="round"/>
-          <path d="M319,298 L319,238 A16,16 0 0 0 351,238 L351,298 Z" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.2"/>
-          <line x1="335" y1="236" x2="335" y2="298" stroke="var(--ink)" stroke-width="0.8"/>
-          <line x1="335" y1="177" x2="335" y2="162" stroke="var(--ink)" stroke-width="1.2"/>
-          <line x1="329" y1="167" x2="341" y2="167" stroke="var(--ink)" stroke-width="1.2"/>
-        </g>
+      <!-- LEFT DORMERS -->
+      <g>
+        <rect x="83" y="218" width="58" height="82" fill="var(--stone)" stroke="var(--ink)" stroke-width="1.5"/>
+        <polygon points="76,220 149,220 112,178" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.5" stroke-linejoin="round"/>
+        <path d="M95,298 L95,240 A17,17 0 0 0 129,240 L129,298 Z" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.2"/>
+        <line x1="112" y1="238" x2="112" y2="298" stroke="var(--ink)" stroke-width="0.8"/>
+        <line x1="112" y1="178" x2="112" y2="163" stroke="var(--ink)" stroke-width="1.2"/>
+        <line x1="106" y1="168" x2="118" y2="168" stroke="var(--ink)" stroke-width="1.2"/>
+      </g>
+      <g>
+        <rect x="198" y="208" width="60" height="88" fill="var(--stone)" stroke="var(--ink)" stroke-width="1.5"/>
+        <polygon points="191,210 265,210 228,165" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.5" stroke-linejoin="round"/>
+        <path d="M210,296 L210,228 A18,18 0 0 0 246,228 L246,296 Z" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.2"/>
+        <line x1="228" y1="226" x2="228" y2="296" stroke="var(--ink)" stroke-width="0.8"/>
+        <line x1="228" y1="165" x2="228" y2="150" stroke="var(--ink)" stroke-width="1.2"/>
+        <line x1="222" y1="155" x2="234" y2="155" stroke="var(--ink)" stroke-width="1.2"/>
+      </g>
+      <g>
+        <rect x="307" y="218" width="56" height="80" fill="var(--stone)" stroke="var(--ink)" stroke-width="1.5"/>
+        <polygon points="300,220 370,220 335,177" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.5" stroke-linejoin="round"/>
+        <path d="M319,298 L319,238 A16,16 0 0 0 351,238 L351,298 Z" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.2"/>
+        <line x1="335" y1="236" x2="335" y2="298" stroke="var(--ink)" stroke-width="0.8"/>
+        <line x1="335" y1="177" x2="335" y2="162" stroke="var(--ink)" stroke-width="1.2"/>
+        <line x1="329" y1="167" x2="341" y2="167" stroke="var(--ink)" stroke-width="1.2"/>
+      </g>
 
-        <!-- RIGHT WING DORMERS (mirrored) -->
-        <g>
-          <rect x="859" y="218" width="58" height="82" fill="var(--stone)" stroke="var(--ink)" stroke-width="1.5"/>
-          <polygon points="852,220 925,220 888,178" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.5" stroke-linejoin="round"/>
-          <path d="M871,298 L871,240 A17,17 0 0 0 905,240 L905,298 Z" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.2"/>
-          <line x1="888" y1="238" x2="888" y2="298" stroke="var(--ink)" stroke-width="0.8"/>
-          <line x1="888" y1="178" x2="888" y2="163" stroke="var(--ink)" stroke-width="1.2"/>
-          <line x1="882" y1="168" x2="894" y2="168" stroke="var(--ink)" stroke-width="1.2"/>
-        </g>
-        <g>
-          <rect x="742" y="208" width="60" height="88" fill="var(--stone)" stroke="var(--ink)" stroke-width="1.5"/>
-          <polygon points="735,210 809,210 772,165" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.5" stroke-linejoin="round"/>
-          <path d="M754,296 L754,228 A18,18 0 0 0 790,228 L790,296 Z" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.2"/>
-          <line x1="772" y1="226" x2="772" y2="296" stroke="var(--ink)" stroke-width="0.8"/>
-          <line x1="772" y1="165" x2="772" y2="150" stroke="var(--ink)" stroke-width="1.2"/>
-          <line x1="766" y1="155" x2="778" y2="155" stroke="var(--ink)" stroke-width="1.2"/>
-        </g>
-        <g>
-          <rect x="637" y="218" width="56" height="80" fill="var(--stone)" stroke="var(--ink)" stroke-width="1.5"/>
-          <polygon points="630,220 700,220 665,177" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.5" stroke-linejoin="round"/>
-          <path d="M649,298 L649,238 A16,16 0 0 0 681,238 L681,298 Z" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.2"/>
-          <line x1="665" y1="236" x2="665" y2="298" stroke="var(--ink)" stroke-width="0.8"/>
-          <line x1="665" y1="177" x2="665" y2="162" stroke="var(--ink)" stroke-width="1.2"/>
-          <line x1="659" y1="167" x2="671" y2="167" stroke="var(--ink)" stroke-width="1.2"/>
-        </g>
+      <!-- RIGHT DORMERS -->
+      <g>
+        <rect x="859" y="218" width="58" height="82" fill="var(--stone)" stroke="var(--ink)" stroke-width="1.5"/>
+        <polygon points="852,220 925,220 888,178" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.5" stroke-linejoin="round"/>
+        <path d="M871,298 L871,240 A17,17 0 0 0 905,240 L905,298 Z" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.2"/>
+        <line x1="888" y1="238" x2="888" y2="298" stroke="var(--ink)" stroke-width="0.8"/>
+        <line x1="888" y1="178" x2="888" y2="163" stroke="var(--ink)" stroke-width="1.2"/>
+        <line x1="882" y1="168" x2="894" y2="168" stroke="var(--ink)" stroke-width="1.2"/>
+      </g>
+      <g>
+        <rect x="742" y="208" width="60" height="88" fill="var(--stone)" stroke="var(--ink)" stroke-width="1.5"/>
+        <polygon points="735,210 809,210 772,165" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.5" stroke-linejoin="round"/>
+        <path d="M754,296 L754,228 A18,18 0 0 0 790,228 L790,296 Z" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.2"/>
+        <line x1="772" y1="226" x2="772" y2="296" stroke="var(--ink)" stroke-width="0.8"/>
+        <line x1="772" y1="165" x2="772" y2="150" stroke="var(--ink)" stroke-width="1.2"/>
+        <line x1="766" y1="155" x2="778" y2="155" stroke="var(--ink)" stroke-width="1.2"/>
+      </g>
+      <g>
+        <rect x="637" y="218" width="56" height="80" fill="var(--stone)" stroke="var(--ink)" stroke-width="1.5"/>
+        <polygon points="630,220 700,220 665,177" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.5" stroke-linejoin="round"/>
+        <path d="M649,298 L649,238 A16,16 0 0 0 681,238 L681,298 Z" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.2"/>
+        <line x1="665" y1="236" x2="665" y2="298" stroke="var(--ink)" stroke-width="0.8"/>
+        <line x1="665" y1="177" x2="665" y2="162" stroke="var(--ink)" stroke-width="1.2"/>
+        <line x1="659" y1="167" x2="671" y2="167" stroke="var(--ink)" stroke-width="1.2"/>
+      </g>
 
-        <!-- ══════════════════════════════════════
-             UPPER FLOOR WINDOWS — LEFT WING
-             (ornate carved hoods, tall)
-        ══════════════════════════════════════ -->
-        <!-- Window 1 left -->
-        <g>
-          <!-- Ornate hood/pediment -->
-          <path d="M86,356 Q86,340 103,340 L157,340 Q174,340 174,356" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.2"/>
-          <!-- Small ornamental tip -->
-          <path d="M130,340 Q130,330 134,326 Q138,330 138,340" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1"/>
-          <!-- Window frame -->
-          <rect x="86" y="356" width="88" height="100" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
-          <!-- Glazing bars -->
-          <line x1="130" y1="356" x2="130" y2="456" stroke="var(--ink)" stroke-width="1"/>
-          <line x1="86" y1="400" x2="174" y2="400" stroke="var(--ink)" stroke-width="1"/>
-          <line x1="86" y1="430" x2="174" y2="430" stroke="var(--ink)" stroke-width="0.7"/>
-        </g>
-        <!-- Window 2 left -->
-        <g>
-          <path d="M248,356 Q248,340 265,340 L319,340 Q336,340 336,356" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.2"/>
-          <path d="M292,340 Q292,330 296,326 Q300,330 300,340" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1"/>
-          <rect x="248" y="356" width="88" height="100" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
-          <line x1="292" y1="356" x2="292" y2="456" stroke="var(--ink)" stroke-width="1"/>
-          <line x1="248" y1="400" x2="336" y2="400" stroke="var(--ink)" stroke-width="1"/>
-          <line x1="248" y1="430" x2="336" y2="430" stroke="var(--ink)" stroke-width="0.7"/>
-        </g>
-
-        <!-- UPPER FLOOR WINDOWS — RIGHT WING -->
-        <g>
-          <path d="M664,356 Q664,340 681,340 L735,340 Q752,340 752,356" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.2"/>
-          <path d="M708,340 Q708,330 712,326 Q716,330 716,340" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1"/>
-          <rect x="664" y="356" width="88" height="100" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
-          <line x1="708" y1="356" x2="708" y2="456" stroke="var(--ink)" stroke-width="1"/>
-          <line x1="664" y1="400" x2="752" y2="400" stroke="var(--ink)" stroke-width="1"/>
-          <line x1="664" y1="430" x2="752" y2="430" stroke="var(--ink)" stroke-width="0.7"/>
-        </g>
-        <g>
-          <path d="M826,356 Q826,340 843,340 L897,340 Q914,340 914,356" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.2"/>
-          <path d="M870,340 Q870,330 874,326 Q878,330 878,340" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1"/>
-          <rect x="826" y="356" width="88" height="100" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
-          <line x1="870" y1="356" x2="870" y2="456" stroke="var(--ink)" stroke-width="1"/>
-          <line x1="826" y1="400" x2="914" y2="400" stroke="var(--ink)" stroke-width="1"/>
-          <line x1="826" y1="430" x2="914" y2="430" stroke="var(--ink)" stroke-width="0.7"/>
-        </g>
-
-        <!-- TOWER UPPER WINDOW -->
-        <g>
-          <!-- Ornate cartouche above tower upper window -->
-          <path d="M462,288 Q462,268 476,264 Q490,258 500,260 Q510,258 524,264 Q538,268 538,288"
-                fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.2"/>
-          <path d="M474,264 Q482,252 500,248 Q518,252 526,264" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1" stroke-linejoin="round"/>
-          <!-- Decorative circle in cartouche -->
-          <circle cx="500" cy="268" r="9" fill="var(--bg)" stroke="var(--ink)" stroke-width="1"/>
-          <circle cx="500" cy="268" r="4" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="0.8"/>
-          <!-- Tall narrow window -->
-          <rect x="462" y="288" width="76" height="150" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
-          <line x1="500" y1="288" x2="500" y2="438" stroke="var(--ink)" stroke-width="1"/>
-          <line x1="462" y1="360" x2="538" y2="360" stroke="var(--ink)" stroke-width="1"/>
-          <line x1="462" y1="410" x2="538" y2="410" stroke="var(--ink)" stroke-width="0.7"/>
-        </g>
-
-        <!-- ══════════════════════════════════════
-             LOWER FLOOR WINDOWS — LEFT WING
-             (arched/fan-top, 4 across)
-        ══════════════════════════════════════ -->
-        <!-- Fan arch helper: arch top with keystone feel -->
-        <!-- Left lower window 1 (small) -->
-        <g>
-          <path d="M68,472 L68,480 A18,18 0 0 0 104,480 L104,472 Z" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.2"/>
-          <rect x="68" y="480" width="36" height="130" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
-          <line x1="86" y1="480" x2="86" y2="610" stroke="var(--ink)" stroke-width="0.8"/>
-          <line x1="68" y1="545" x2="104" y2="545" stroke="var(--ink)" stroke-width="0.8"/>
-        </g>
-        <!-- Left lower window 2 (large) -->
-        <g>
-          <path d="M115,472 L115,480 A34,34 0 0 0 183,480 L183,472 Z" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.2"/>
-          <rect x="115" y="480" width="68" height="130" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
-          <line x1="149" y1="480" x2="149" y2="610" stroke="var(--ink)" stroke-width="1"/>
-          <line x1="115" y1="535" x2="183" y2="535" stroke="var(--ink)" stroke-width="0.8"/>
-          <line x1="115" y1="570" x2="183" y2="570" stroke="var(--ink)" stroke-width="0.7"/>
-        </g>
-        <!-- Left lower window 3 (small) -->
-        <g>
-          <path d="M205,472 L205,480 A18,18 0 0 0 241,480 L241,472 Z" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.2"/>
-          <rect x="205" y="480" width="36" height="130" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
-          <line x1="223" y1="480" x2="223" y2="610" stroke="var(--ink)" stroke-width="0.8"/>
-          <line x1="205" y1="545" x2="241" y2="545" stroke="var(--ink)" stroke-width="0.8"/>
-        </g>
-        <!-- Left lower window 4 (large) -->
-        <g>
-          <path d="M252,472 L252,480 A34,34 0 0 0 320,480 L320,472 Z" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.2"/>
-          <rect x="252" y="480" width="68" height="130" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
-          <line x1="286" y1="480" x2="286" y2="610" stroke="var(--ink)" stroke-width="1"/>
-          <line x1="252" y1="535" x2="320" y2="535" stroke="var(--ink)" stroke-width="0.8"/>
-          <line x1="252" y1="570" x2="320" y2="570" stroke="var(--ink)" stroke-width="0.7"/>
-        </g>
-
-        <!-- RIGHT LOWER WINDOWS (mirrored) -->
-        <g>
-          <path d="M932,472 L932,480 A18,18 0 0 0 896,480 L896,472 Z" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.2"/>
-          <rect x="896" y="480" width="36" height="130" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
-          <line x1="914" y1="480" x2="914" y2="610" stroke="var(--ink)" stroke-width="0.8"/>
-          <line x1="896" y1="545" x2="932" y2="545" stroke="var(--ink)" stroke-width="0.8"/>
-        </g>
-        <g>
-          <path d="M885,472 L885,480 A34,34 0 0 0 817,480 L817,472 Z" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.2"/>
-          <rect x="817" y="480" width="68" height="130" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
-          <line x1="851" y1="480" x2="851" y2="610" stroke="var(--ink)" stroke-width="1"/>
-          <line x1="817" y1="535" x2="885" y2="535" stroke="var(--ink)" stroke-width="0.8"/>
-          <line x1="817" y1="570" x2="885" y2="570" stroke="var(--ink)" stroke-width="0.7"/>
-        </g>
-        <g>
-          <path d="M795,472 L795,480 A18,18 0 0 0 759,480 L759,472 Z" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.2"/>
-          <rect x="759" y="480" width="36" height="130" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
-          <line x1="777" y1="480" x2="777" y2="610" stroke="var(--ink)" stroke-width="0.8"/>
-          <line x1="759" y1="545" x2="795" y2="545" stroke="var(--ink)" stroke-width="0.8"/>
-        </g>
-        <g>
-          <path d="M748,472 L748,480 A34,34 0 0 0 680,480 L680,472 Z" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.2"/>
-          <rect x="680" y="480" width="68" height="130" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
-          <line x1="714" y1="480" x2="714" y2="610" stroke="var(--ink)" stroke-width="1"/>
-          <line x1="680" y1="535" x2="748" y2="535" stroke="var(--ink)" stroke-width="0.8"/>
-          <line x1="680" y1="570" x2="748" y2="570" stroke="var(--ink)" stroke-width="0.7"/>
-        </g>
-
-        <!-- ══════════════════════════════════════
-             TOWER LOWER WINDOWS (flanking entrance)
-        ══════════════════════════════════════ -->
-        <!-- Left of entrance (narrow) -->
-        <rect x="400" y="480" width="48" height="130" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.3"/>
-        <line x1="424" y1="480" x2="424" y2="610" stroke="var(--ink)" stroke-width="0.8"/>
-        <line x1="400" y1="545" x2="448" y2="545" stroke="var(--ink)" stroke-width="0.8"/>
-        <!-- Right of entrance (narrow) -->
-        <rect x="552" y="480" width="48" height="130" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.3"/>
-        <line x1="576" y1="480" x2="576" y2="610" stroke="var(--ink)" stroke-width="0.8"/>
-        <line x1="552" y1="545" x2="600" y2="545" stroke="var(--ink)" stroke-width="0.8"/>
-
-        <!-- ══════════════════════════════════════
-             ORNATE ENTRANCE DOOR
-             (central tower base, with carved surround)
-        ══════════════════════════════════════ -->
-        <!-- Outer ornate frame (rounded at top with carving) -->
-        <path d="M453,643 L453,526 Q453,500 500,494 Q547,500 547,526 L547,643 Z"
-              fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="2"/>
-        <!-- Inner door opening -->
-        <path d="M466,643 L466,530 Q466,512 500,508 Q534,512 534,530 L534,643 Z"
-              fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
-        <!-- Cartouche above door (ornamental carving) -->
-        <path d="M462,499 Q462,480 480,474 Q500,470 520,474 Q538,480 538,499"
-              fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.5"/>
-        <path d="M470,475 Q470,460 488,456 Q500,454 512,456 Q530,460 530,475"
+      <!-- UPPER WINDOWS LEFT -->
+      <g>
+        <path d="M86,356 Q86,340 103,340 L157,340 Q174,340 174,356" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.2"/>
+        <path d="M130,340 Q130,330 134,326 Q138,330 138,340" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1"/>
+        <rect x="86" y="356" width="88" height="100" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
+        <line x1="130" y1="356" x2="130" y2="456" stroke="var(--ink)" stroke-width="1"/>
+        <line x1="86" y1="400" x2="174" y2="400" stroke="var(--ink)" stroke-width="1"/>
+        <line x1="86" y1="430" x2="174" y2="430" stroke="var(--ink)" stroke-width="0.7"/>
+      </g>
+      <g>
+        <path d="M248,356 Q248,340 265,340 L319,340 Q336,340 336,356" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.2"/>
+        <path d="M292,340 Q292,330 296,326 Q300,330 300,340" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1"/>
+        <rect x="248" y="356" width="88" height="100" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
+        <line x1="292" y1="356" x2="292" y2="456" stroke="var(--ink)" stroke-width="1"/>
+        <line x1="248" y1="400" x2="336" y2="400" stroke="var(--ink)" stroke-width="1"/>
+        <line x1="248" y1="430" x2="336" y2="430" stroke="var(--ink)" stroke-width="0.7"/>
+      </g>
+      <!-- UPPER WINDOWS RIGHT -->
+      <g>
+        <path d="M664,356 Q664,340 681,340 L735,340 Q752,340 752,356" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.2"/>
+        <path d="M708,340 Q708,330 712,326 Q716,330 716,340" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1"/>
+        <rect x="664" y="356" width="88" height="100" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
+        <line x1="708" y1="356" x2="708" y2="456" stroke="var(--ink)" stroke-width="1"/>
+        <line x1="664" y1="400" x2="752" y2="400" stroke="var(--ink)" stroke-width="1"/>
+        <line x1="664" y1="430" x2="752" y2="430" stroke="var(--ink)" stroke-width="0.7"/>
+      </g>
+      <g>
+        <path d="M826,356 Q826,340 843,340 L897,340 Q914,340 914,356" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.2"/>
+        <path d="M870,340 Q870,330 874,326 Q878,330 878,340" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1"/>
+        <rect x="826" y="356" width="88" height="100" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
+        <line x1="870" y1="356" x2="870" y2="456" stroke="var(--ink)" stroke-width="1"/>
+        <line x1="826" y1="400" x2="914" y2="400" stroke="var(--ink)" stroke-width="1"/>
+        <line x1="826" y1="430" x2="914" y2="430" stroke="var(--ink)" stroke-width="0.7"/>
+      </g>
+      <!-- TOWER UPPER WINDOW -->
+      <g>
+        <path d="M462,288 Q462,268 476,264 Q490,258 500,260 Q510,258 524,264 Q538,268 538,288"
               fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.2"/>
-        <ellipse cx="500" cy="468" rx="14" ry="10" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1"/>
-        <ellipse cx="500" cy="468" rx="7" ry="5" fill="var(--bg)" stroke="var(--ink)" stroke-width="0.8"/>
-        <!-- Flanking volutes -->
-        <path d="M455,499 Q448,493 451,485 Q454,477 462,478" fill="none" stroke="var(--ink)" stroke-width="1.2"/>
-        <path d="M545,499 Q552,493 549,485 Q546,477 538,478" fill="none" stroke="var(--ink)" stroke-width="1.2"/>
-        <!-- Door steps -->
-        <rect x="443" y="635" width="114" height="8" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.2"/>
-        <rect x="434" y="643" width="132" height="7" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.2"/>
-        <!-- Door panels -->
-        <line x1="500" y1="530" x2="500" y2="635" stroke="var(--ink)" stroke-width="1" opacity="0.5"/>
-        <rect x="470" y="548" width="24" height="34" rx="1" fill="none" stroke="var(--ink)" stroke-width="0.8" opacity="0.6"/>
-        <rect x="506" y="548" width="24" height="34" rx="1" fill="none" stroke="var(--ink)" stroke-width="0.8" opacity="0.6"/>
-        <rect x="470" y="586" width="24" height="34" rx="1" fill="none" stroke="var(--ink)" stroke-width="0.8" opacity="0.6"/>
-        <rect x="506" y="586" width="24" height="34" rx="1" fill="none" stroke="var(--ink)" stroke-width="0.8" opacity="0.6"/>
-        <!-- Door handle -->
-        <circle cx="494" cy="590" r="2.5" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1"/>
-        <circle cx="506" cy="590" r="2.5" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1"/>
+        <path d="M474,264 Q482,252 500,248 Q518,252 526,264" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.2"/>
+        <circle cx="500" cy="268" r="9" fill="var(--bg)" stroke="var(--ink)" stroke-width="1"/>
+        <circle cx="500" cy="268" r="4" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="0.8"/>
+        <rect x="462" y="288" width="76" height="150" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
+        <line x1="500" y1="288" x2="500" y2="438" stroke="var(--ink)" stroke-width="1"/>
+        <line x1="462" y1="360" x2="538" y2="360" stroke="var(--ink)" stroke-width="1"/>
+        <line x1="462" y1="410" x2="538" y2="410" stroke="var(--ink)" stroke-width="0.7"/>
+      </g>
 
+      <!-- LOWER WINDOWS LEFT -->
+      <g><path d="M68,472 L68,480 A18,18 0 0 0 104,480 L104,472 Z" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.2"/>
+        <rect x="68" y="480" width="36" height="130" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
+        <line x1="86" y1="480" x2="86" y2="610" stroke="var(--ink)" stroke-width="0.8"/>
+        <line x1="68" y1="545" x2="104" y2="545" stroke="var(--ink)" stroke-width="0.8"/></g>
+      <g><path d="M115,472 L115,480 A34,34 0 0 0 183,480 L183,472 Z" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.2"/>
+        <rect x="115" y="480" width="68" height="130" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
+        <line x1="149" y1="480" x2="149" y2="610" stroke="var(--ink)" stroke-width="1"/>
+        <line x1="115" y1="535" x2="183" y2="535" stroke="var(--ink)" stroke-width="0.8"/>
+        <line x1="115" y1="570" x2="183" y2="570" stroke="var(--ink)" stroke-width="0.7"/></g>
+      <g><path d="M205,472 L205,480 A18,18 0 0 0 241,480 L241,472 Z" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.2"/>
+        <rect x="205" y="480" width="36" height="130" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
+        <line x1="223" y1="480" x2="223" y2="610" stroke="var(--ink)" stroke-width="0.8"/>
+        <line x1="205" y1="545" x2="241" y2="545" stroke="var(--ink)" stroke-width="0.8"/></g>
+      <g><path d="M252,472 L252,480 A34,34 0 0 0 320,480 L320,472 Z" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.2"/>
+        <rect x="252" y="480" width="68" height="130" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
+        <line x1="286" y1="480" x2="286" y2="610" stroke="var(--ink)" stroke-width="1"/>
+        <line x1="252" y1="535" x2="320" y2="535" stroke="var(--ink)" stroke-width="0.8"/>
+        <line x1="252" y1="570" x2="320" y2="570" stroke="var(--ink)" stroke-width="0.7"/></g>
+      <!-- LOWER WINDOWS RIGHT -->
+      <g><path d="M932,472 L932,480 A18,18 0 0 0 896,480 L896,472 Z" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.2"/>
+        <rect x="896" y="480" width="36" height="130" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
+        <line x1="914" y1="480" x2="914" y2="610" stroke="var(--ink)" stroke-width="0.8"/>
+        <line x1="896" y1="545" x2="932" y2="545" stroke="var(--ink)" stroke-width="0.8"/></g>
+      <g><path d="M885,472 L885,480 A34,34 0 0 0 817,480 L817,472 Z" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.2"/>
+        <rect x="817" y="480" width="68" height="130" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
+        <line x1="851" y1="480" x2="851" y2="610" stroke="var(--ink)" stroke-width="1"/>
+        <line x1="817" y1="535" x2="885" y2="535" stroke="var(--ink)" stroke-width="0.8"/>
+        <line x1="817" y1="570" x2="885" y2="570" stroke="var(--ink)" stroke-width="0.7"/></g>
+      <g><path d="M795,472 L795,480 A18,18 0 0 0 759,480 L759,472 Z" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.2"/>
+        <rect x="759" y="480" width="36" height="130" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
+        <line x1="777" y1="480" x2="777" y2="610" stroke="var(--ink)" stroke-width="0.8"/>
+        <line x1="759" y1="545" x2="795" y2="545" stroke="var(--ink)" stroke-width="0.8"/></g>
+      <g><path d="M748,472 L748,480 A34,34 0 0 0 680,480 L680,472 Z" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.2"/>
+        <rect x="680" y="480" width="68" height="130" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
+        <line x1="714" y1="480" x2="714" y2="610" stroke="var(--ink)" stroke-width="1"/>
+        <line x1="680" y1="535" x2="748" y2="535" stroke="var(--ink)" stroke-width="0.8"/>
+        <line x1="680" y1="570" x2="748" y2="570" stroke="var(--ink)" stroke-width="0.7"/></g>
+      <!-- TOWER FLANK WINDOWS -->
+      <rect x="400" y="480" width="48" height="130" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.3"/>
+      <line x1="424" y1="480" x2="424" y2="610" stroke="var(--ink)" stroke-width="0.8"/>
+      <line x1="400" y1="545" x2="448" y2="545" stroke="var(--ink)" stroke-width="0.8"/>
+      <rect x="552" y="480" width="48" height="130" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.3"/>
+      <line x1="576" y1="480" x2="576" y2="610" stroke="var(--ink)" stroke-width="0.8"/>
+      <line x1="552" y1="545" x2="600" y2="545" stroke="var(--ink)" stroke-width="0.8"/>
+
+      <!-- ENTRANCE DOOR -->
+      <path d="M453,643 L453,526 Q453,500 500,494 Q547,500 547,526 L547,643 Z"
+            fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="2"/>
+      <path d="M466,643 L466,530 Q466,512 500,508 Q534,512 534,530 L534,643 Z"
+            fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
+      <path d="M462,499 Q462,480 480,474 Q500,470 520,474 Q538,480 538,499"
+            fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.5"/>
+      <path d="M470,475 Q470,460 488,456 Q500,454 512,456 Q530,460 530,475"
+            fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.2"/>
+      <ellipse cx="500" cy="468" rx="14" ry="10" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1"/>
+      <ellipse cx="500" cy="468" rx="7" ry="5" fill="var(--bg)" stroke="var(--ink)" stroke-width="0.8"/>
+      <path d="M455,499 Q448,493 451,485 Q454,477 462,478" fill="none" stroke="var(--ink)" stroke-width="1.2"/>
+      <path d="M545,499 Q552,493 549,485 Q546,477 538,478" fill="none" stroke="var(--ink)" stroke-width="1.2"/>
+      <rect x="443" y="635" width="114" height="8" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.2"/>
+      <rect x="434" y="643" width="132" height="7" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.2"/>
+      <line x1="500" y1="530" x2="500" y2="635" stroke="var(--ink)" stroke-width="1" opacity="0.5"/>
+      <rect x="470" y="548" width="24" height="34" rx="1" fill="none" stroke="var(--ink)" stroke-width="0.8" opacity="0.6"/>
+      <rect x="506" y="548" width="24" height="34" rx="1" fill="none" stroke="var(--ink)" stroke-width="0.8" opacity="0.6"/>
+      <rect x="470" y="586" width="24" height="34" rx="1" fill="none" stroke="var(--ink)" stroke-width="0.8" opacity="0.6"/>
+      <rect x="506" y="586" width="24" height="34" rx="1" fill="none" stroke="var(--ink)" stroke-width="0.8" opacity="0.6"/>
+      <circle cx="494" cy="590" r="2.5" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1"/>
+      <circle cx="506" cy="590" r="2.5" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1"/>
+    </svg>
+  </div>
+
+  <p class="click-cue">Cliquez pour entrer</p>
+</div>
+
+
+<!-- ══════════ PICKER SCENE ══════════ -->
+<div class="scene hidden" id="picker">
+  <p class="picker-label">Que souhaitez-vous découvrir&nbsp;?</p>
+  <div class="choices">
+    <button class="choice-btn wine" onclick="showSection('wine')">
+      <svg class="choice-icon" viewBox="0 0 46 60" fill="none" stroke="currentColor"
+           stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M13,6 L33,6 C33,6 36,26 23,35 C10,26 13,6 13,6 Z"/>
+        <line x1="23" y1="35" x2="23" y2="52"/>
+        <line x1="13" y1="52" x2="33" y2="52"/>
       </svg>
-    </div>
-
-    <!-- ── INTERIOR CHOICE ── -->
-    <div class="interior" id="interior">
-      <p class="choice-intro">Que souhaitez-vous découvrir&nbsp;?</p>
-
-      <div class="choices">
-        <a href="https://www.lechateaudefontenay.fr/vins/" class="choice-card wine" target="_blank">
-          <svg class="choice-icon" viewBox="0 0 46 60" xmlns="http://www.w3.org/2000/svg"
-               fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M13,6 L33,6 C33,6 36,26 23,35 C10,26 13,6 13,6 Z"/>
-            <line x1="23" y1="35" x2="23" y2="52"/>
-            <line x1="13" y1="52" x2="33" y2="52"/>
-          </svg>
-          <h2>Les Vins</h2>
-          <p>Grands crus de Bourgogne</p>
-        </a>
-
-        <div class="divider-line"></div>
-
-        <a href="https://www.lechateaudefontenay.fr/sejour/" class="choice-card stay" target="_blank">
-          <svg class="choice-icon" viewBox="0 0 46 60" xmlns="http://www.w3.org/2000/svg"
-               fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M11,52 L11,30 A12,12 0 0 1 35,30 L35,52"/>
-            <line x1="9" y1="52" x2="37" y2="52"/>
-            <line x1="23" y1="27" x2="23" y2="52" stroke-width="1" opacity="0.4"/>
-            <line x1="11" y1="40" x2="35" y2="40" stroke-width="1" opacity="0.4"/>
-          </svg>
-          <h2>Séjourner</h2>
-          <p>Chambres &amp; suites d'exception</p>
-        </a>
-      </div>
-    </div>
-
-    <button class="back-btn" id="backBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">
-      &#8592;&ensp;Retour
+      <h2>Les Vins</h2>
+      <p>Grands crus de Bourgogne</p>
     </button>
-
+    <div class="divider-line"></div>
+    <button class="choice-btn stay" onclick="showSection('stay')">
+      <svg class="choice-icon" viewBox="0 0 46 60" fill="none" stroke="currentColor"
+           stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M11,52 L11,30 A12,12 0 0 1 35,30 L35,52"/>
+        <line x1="9" y1="52" x2="37" y2="52"/>
+        <line x1="23" y1="27" x2="23" y2="52" stroke-width="1" opacity="0.4"/>
+        <line x1="11" y1="40" x2="35" y2="40" stroke-width="1" opacity="0.4"/>
+      </svg>
+      <h2>Séjourner</h2>
+      <p>Chambres &amp; suites d'exception</p>
+    </button>
   </div>
 </div>
 
+
+<!-- ══════════ WINE SCENE ══════════ -->
+<div class="scene hidden" id="wine-scene">
+  <div class="content-inner">
+    <div class="back-row">
+      <button class="back-btn" onclick="goBack()">&#8592;&ensp;Retour</button>
+    </div>
+    <p class="content-eyebrow">Domaine viticole</p>
+    <h1 class="content-title wine-color">Les Vins</h1>
+    <p class="content-lead">
+      Le Château de Fontenay cultive ses vignes en Bourgogne depuis plusieurs siècles.
+      Chaque millésime exprime la singularité du terroir — sols argilo-calcaires, expositions
+      soignées, vendanges manuelles — pour des vins d'une précision rare.
+    </p>
+    <hr class="divider-rule">
+    <div class="cards">
+      <div class="card">
+        <p class="card-label">Appellation</p>
+        <h3>Bourgogne Rouge</h3>
+        <p>Pinot Noir élégant aux notes de fruits rouges et d'épices douces. Introduction parfaite au domaine.</p>
+      </div>
+      <div class="card">
+        <p class="card-label">Appellation</p>
+        <h3>Côte de Nuits</h3>
+        <p>Complexité aromatique, structure tannique veloutée et longue finale. Le cœur de la collection.</p>
+      </div>
+      <div class="card">
+        <p class="card-label">Appellation</p>
+        <h3>Cuvée Prestige</h3>
+        <p>Sélection parcellaire en vieilles vignes. Élevage en fûts de chêne, garde conseillée 10 à 15 ans.</p>
+      </div>
+    </div>
+    <a href="https://www.lechateaudefontenay.fr/vins/" target="_blank" class="cta-link wine-link">
+      Découvrir tous les vins &rarr;
+    </a>
+  </div>
+</div>
+
+
+<!-- ══════════ STAY SCENE ══════════ -->
+<div class="scene hidden" id="stay-scene">
+  <div class="content-inner">
+    <div class="back-row">
+      <button class="back-btn" onclick="goBack()">&#8592;&ensp;Retour</button>
+    </div>
+    <p class="content-eyebrow">Maison d'hôtes</p>
+    <h1 class="content-title stay-color">Séjourner</h1>
+    <p class="content-lead">
+      Au cœur de la Bourgogne, le Château de Fontenay ouvre ses portes pour des séjours d'exception.
+      Chambres et suites finement décorées, parc à la française, petit-déjeuner servi en salle
+      d'apparat — le temps d'un week-end ou d'une semaine.
+    </p>
+    <hr class="divider-rule">
+    <div class="cards">
+      <div class="card">
+        <p class="card-label">Chambre</p>
+        <h3>Chambre Classique</h3>
+        <p>Vue sur le parc, mobilier d'époque restauré, salle de bain en marbre. Petit-déjeuner inclus.</p>
+      </div>
+      <div class="card">
+        <p class="card-label">Suite</p>
+        <h3>Suite Fontenay</h3>
+        <p>Salon attenant, baldaquin, vue sur les vignes. L'expérience complète du château privé.</p>
+      </div>
+      <div class="card">
+        <p class="card-label">Privatisation</p>
+        <h3>Le Château Entier</h3>
+        <p>Séminaires, mariages, événements familiaux. Le domaine vous appartient le temps de votre séjour.</p>
+      </div>
+    </div>
+    <a href="https://www.lechateaudefontenay.fr/sejour/" target="_blank" class="cta-link stay-link">
+      Réserver un séjour &rarr;
+    </a>
+  </div>
+</div>
+
+
 <script>
-const hdr        = document.getElementById('hdr');
-const castleWrap = document.getElementById('castleWrap');
-const castleSvg  = document.getElementById('castleSvg');
-const interior   = document.getElementById('interior');
-const backBtn    = document.getElementById('backBtn');
-const driver     = document.getElementById('driver');
+const entryEl   = document.getElementById('entry');
+const pickerEl  = document.getElementById('picker');
+const wineEl    = document.getElementById('wine-scene');
+const stayEl    = document.getElementById('stay-scene');
+const svgEl     = document.getElementById('castleSvg');
+const hdrEl     = document.getElementById('entryHeader');
 
-function eio(t){ return t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2; }
-
-let raf = null;
-function onScroll(){
-  if(raf) return;
-  raf = requestAnimationFrame(()=>{
-    raf = null;
-    const maxScroll = driver.offsetHeight - window.innerHeight;
-    const p = Math.max(0, Math.min(window.scrollY / maxScroll, 1));
-
-    // Header fades out in first 18% of scroll
-    hdr.style.opacity = Math.max(0, 1 - p / 0.18).toFixed(3);
-
-    // Castle zooms in (0–72%), then fades (72–88%)
-    const zoomP = Math.min(p / 0.72, 1);
-    const scale = 1 + eio(zoomP) * 15;
-    castleSvg.style.transform = `scale(${scale})`;
-
-    const wrapOp = p < 0.72 ? 1 : Math.max(0, 1 - (p - 0.72) / 0.16);
-    castleWrap.style.opacity = wrapOp.toFixed(3);
-
-    // Interior fades in (88–100%)
-    const iOp = p < 0.88 ? 0 : Math.min(1, (p - 0.88) / 0.12);
-    interior.style.opacity    = iOp.toFixed(3);
-    interior.style.pointerEvents = iOp > 0.5 ? 'all' : 'none';
-    backBtn.style.opacity        = iOp.toFixed(3);
-    backBtn.style.pointerEvents  = iOp > 0.5 ? 'all' : 'none';
-  });
+function showScene(el) {
+  [entryEl, pickerEl, wineEl, stayEl].forEach(s => s.classList.add('hidden'));
+  el.classList.remove('hidden');
 }
 
-window.addEventListener('scroll', onScroll, { passive: true });
-onScroll();
+function enter() {
+  hdrEl.style.opacity = '0';
+  svgEl.classList.add('zooming');
+  // Fade entry scene out slightly before showing picker
+  setTimeout(() => {
+    entryEl.classList.add('hidden');
+    showScene(pickerEl);
+  }, 1350);
+}
+
+function showSection(which) {
+  showScene(which === 'wine' ? wineEl : stayEl);
+}
+
+function goBack() {
+  showScene(pickerEl);
+}
 </script>
