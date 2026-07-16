@@ -1,0 +1,384 @@
+
+<meta charset="UTF-8">
+<title>Château de Fontenay</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #F6F4EF;
+  --ink: #1A1816;
+  --stone: #E2DAD0;
+  --stone-dk: #C4BAB0;
+  --wine: #5C1A2E;
+  --ivy: #243D30;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#151310; --ink:#EAE6DF; --stone:#2E2A25; --stone-dk:#221F1A; }
+}
+:root[data-theme="light"] { --bg:#F6F4EF; --ink:#1A1816; --stone:#E2DAD0; --stone-dk:#C4BAB0; }
+:root[data-theme="dark"]  { --bg:#151310; --ink:#EAE6DF; --stone:#2E2A25; --stone-dk:#221F1A; }
+
+html { scroll-behavior: auto; }
+body { background: var(--bg); color: var(--ink); font-family: Georgia, serif; overflow-x: hidden; }
+
+.scroll-driver { height: 500vh; position: relative; }
+
+.sticky-scene {
+  position: sticky; top: 0; height: 100vh; width: 100%; overflow: hidden;
+}
+
+/* ── HEADER ── */
+.castle-header {
+  position: absolute; top: 0; left: 0; right: 0;
+  display: flex; flex-direction: column; align-items: center;
+  padding-top: clamp(1.8rem, 5vh, 4rem);
+  z-index: 10; pointer-events: none; text-align: center;
+}
+.eyebrow {
+  font-family: system-ui, sans-serif; font-size: 0.68rem;
+  letter-spacing: 0.28em; text-transform: uppercase; opacity: 0.42;
+  margin-bottom: 1.1rem; font-weight: 400;
+}
+.castle-title {
+  font-size: clamp(2rem, 5.5vw, 4.5rem); font-weight: 400;
+  line-height: 1.06; letter-spacing: -0.015em; text-wrap: balance;
+}
+.scroll-cue {
+  font-family: system-ui, sans-serif; font-size: 0.65rem;
+  letter-spacing: 0.28em; text-transform: uppercase; opacity: 0.35;
+  margin-top: 2rem; animation: nudge 2.5s ease-in-out infinite;
+}
+@keyframes nudge {
+  0%,100% { transform: translateY(0); opacity: .35; }
+  50%      { transform: translateY(5px); opacity: .62; }
+}
+
+/* ── CASTLE ── */
+.castle-wrap {
+  position: absolute; inset: 0;
+  display: flex; align-items: flex-end; justify-content: center;
+  will-change: opacity;
+}
+.castle-svg {
+  width: min(97vw, 1160px); height: auto; display: block;
+  transform-origin: 50% 76%;
+  will-change: transform;
+}
+
+/* ── INTERIOR ── */
+.interior {
+  position: absolute; inset: 0; opacity: 0; pointer-events: none;
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; background: var(--bg); z-index: 20;
+}
+.vault-svg { width: min(88vw, 820px); height: auto; flex-shrink: 0; }
+
+.choice-intro {
+  font-family: system-ui, sans-serif; font-size: 0.62rem;
+  letter-spacing: 0.28em; text-transform: uppercase; opacity: 0.38;
+  margin: 1.4rem 0 0; text-align: center;
+}
+
+.choices {
+  display: grid; grid-template-columns: 1fr 1px 1fr;
+  width: min(88vw, 820px); margin-top: 0;
+}
+.divider-line { background: var(--ink); opacity: 0.15; margin: 1.5rem 0; }
+
+.choice-card {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; padding: 2.5rem 1.5rem 2rem;
+  text-decoration: none; color: var(--ink);
+  transition: background 0.35s; cursor: pointer; position: relative;
+  border-top: 1.5px solid var(--ink);
+}
+.choice-card:hover { background: var(--stone); }
+.choice-card.wine:hover { background: color-mix(in srgb, var(--wine) 7%, var(--bg)); }
+.choice-card.stay:hover { background: color-mix(in srgb, var(--ivy) 7%, var(--bg)); }
+
+.choice-icon {
+  width: 46px; height: 56px; margin-bottom: 1.2rem;
+  transition: transform 0.3s ease;
+}
+.choice-card:hover .choice-icon { transform: translateY(-3px); }
+
+.choice-card h2 {
+  font-size: clamp(1.25rem, 2.5vw, 1.65rem); font-weight: 400;
+  letter-spacing: 0.02em; margin-bottom: 0.45rem;
+  transition: color 0.3s;
+}
+.choice-card.wine:hover h2 { color: var(--wine); }
+.choice-card.stay:hover h2 { color: var(--ivy); }
+.choice-card p {
+  font-family: system-ui, sans-serif; font-size: 0.65rem;
+  letter-spacing: 0.13em; text-transform: uppercase; opacity: 0.42; text-align: center;
+}
+
+.back-btn {
+  position: fixed; top: 1.4rem; left: 1.4rem; z-index: 100;
+  font-family: system-ui, sans-serif; font-size: 0.62rem;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  background: none; border: 1px solid currentColor;
+  color: var(--ink); opacity: 0; padding: 0.45rem 0.9rem;
+  cursor: pointer; pointer-events: none; transition: opacity 0.3s, background 0.2s;
+}
+.back-btn:hover { background: var(--stone); }
+
+@media (prefers-reduced-motion: reduce) {
+  .castle-svg { transition: none; }
+  .scroll-cue { animation: none; }
+}
+@media (max-width: 540px) {
+  .choices { grid-template-columns: 1fr; }
+  .divider-line { height: 1px; width: 60%; margin: 0 auto; }
+}
+</style>
+
+<div class="scroll-driver" id="driver">
+  <div class="sticky-scene" id="scene">
+
+    <header class="castle-header" id="hdr">
+      <p class="eyebrow">Bourgogne &middot; France</p>
+      <h1 class="castle-title">Château<br>de Fontenay</h1>
+      <p class="scroll-cue">&#8595;&ensp;Entrez</p>
+    </header>
+
+    <div class="castle-wrap" id="castleWrap">
+      <svg class="castle-svg" id="castleSvg" viewBox="0 0 1000 628"
+           xmlns="http://www.w3.org/2000/svg" fill="none">
+        <defs>
+          <pattern id="slates" x="0" y="0" width="1" height="13"
+                   patternUnits="userSpaceOnUse">
+            <line x1="0" y1="6.5" x2="2000" y2="6.5"
+                  stroke="var(--stone-dk)" stroke-width="0.7" opacity="0.55"/>
+          </pattern>
+          <clipPath id="gate-clip">
+            <path d="M442,628 L442,410 A58,58 0 0 0 558,410 L558,628 Z"/>
+          </clipPath>
+        </defs>
+
+        <!-- ═══ LEFT TOWER ═══ -->
+        <rect x="38" y="148" width="116" height="480" fill="var(--stone)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/>
+        <polygon points="30,152 162,152 96,36" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/>
+        <polygon points="30,152 162,152 96,36" fill="url(#slates)"/>
+        <!-- flag -->
+        <line x1="96" y1="36" x2="96" y2="8" stroke="var(--ink)" stroke-width="1.5"/>
+        <polygon points="96,8 122,15 96,22" fill="var(--wine)"/>
+        <!-- quoins -->
+        <rect x="38" y="152" width="13" height="8" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="0.7"/>
+        <rect x="141" y="152" width="13" height="8" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="0.7"/>
+        <rect x="38" y="178" width="13" height="8" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="0.7"/>
+        <rect x="141" y="178" width="13" height="8" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="0.7"/>
+        <rect x="38" y="204" width="13" height="8" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="0.7"/>
+        <rect x="141" y="204" width="13" height="8" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="0.7"/>
+        <!-- windows (arched, sweep CCW = upward) -->
+        <path d="M75,278 L75,210 A22,22 0 0 0 119,210 L119,278 Z" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
+        <path d="M75,385 L75,317 A22,22 0 0 0 119,317 L119,385 Z" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
+        <path d="M75,495 L75,427 A22,22 0 0 0 119,427 L119,495 Z" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
+
+        <!-- ═══ LEFT WING ═══ -->
+        <rect x="152" y="226" width="130" height="402" fill="var(--stone)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/>
+        <polygon points="143,230 290,230 217,138" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/>
+        <polygon points="143,230 290,230 217,138" fill="url(#slates)"/>
+        <!-- wing dormer -->
+        <polygon points="196,207 242,207 219,174" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.5" stroke-linejoin="round"/>
+        <rect x="202" y="193" width="34" height="18" fill="var(--bg)" stroke="var(--ink)" stroke-width="1"/>
+        <!-- wing windows -->
+        <path d="M172,376 L172,274 A35,35 0 0 0 242,274 L242,376 Z" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
+        <path d="M172,508 L172,408 A35,35 0 0 0 242,408 L242,508 Z" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
+
+        <!-- ═══ CENTRAL BLOCK ═══ -->
+        <rect x="280" y="96" width="440" height="532" fill="var(--stone)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/>
+        <polygon points="268,100 732,100 500,8" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/>
+        <polygon points="268,100 732,100 500,8" fill="url(#slates)"/>
+        <!-- dormers -->
+        <polygon points="358,80 412,80 385,50" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.5" stroke-linejoin="round"/>
+        <rect x="364" y="66" width="42" height="20" fill="var(--bg)" stroke="var(--ink)" stroke-width="1"/>
+        <polygon points="588,80 642,80 615,50" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.5" stroke-linejoin="round"/>
+        <rect x="594" y="66" width="42" height="20" fill="var(--bg)" stroke="var(--ink)" stroke-width="1"/>
+        <!-- string course 1 -->
+        <rect x="280" y="289" width="440" height="9" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1"/>
+        <!-- upper windows (3 tall arched, r=32) -->
+        <path d="M326,283 L326,128 A32,32 0 0 0 390,128 L390,283 Z" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
+        <path d="M468,283 L468,128 A32,32 0 0 0 532,128 L532,283 Z" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
+        <path d="M610,283 L610,128 A32,32 0 0 0 674,128 L674,283 Z" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
+        <!-- string course 2 -->
+        <rect x="280" y="412" width="440" height="8" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1"/>
+        <!-- middle floor windows (4 smaller, r=24) -->
+        <path d="M300,408 L300,308 A24,24 0 0 0 348,308 L348,408 Z" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
+        <path d="M368,408 L368,308 A24,24 0 0 0 416,308 L416,408 Z" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
+        <path d="M584,408 L584,308 A24,24 0 0 0 632,308 L632,408 Z" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
+        <path d="M652,408 L652,308 A24,24 0 0 0 700,308 L700,408 Z" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
+
+        <!-- ═══ ENTRANCE ARCH ═══ -->
+        <!-- outer stone surround (r=76) -->
+        <path d="M424,628 L424,410 A76,76 0 0 0 576,410 L576,628 Z" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="2"/>
+        <!-- inner opening (r=58) - filled bg -->
+        <path d="M442,628 L442,410 A58,58 0 0 0 558,410 L558,628 Z" fill="var(--bg)"/>
+        <!-- gate bars (very subtle) -->
+        <g clip-path="url(#gate-clip)" opacity="0.1">
+          <line x1="453" y1="380" x2="453" y2="628" stroke="var(--ink)" stroke-width="2.5"/>
+          <line x1="466" y1="380" x2="466" y2="628" stroke="var(--ink)" stroke-width="2.5"/>
+          <line x1="479" y1="380" x2="479" y2="628" stroke="var(--ink)" stroke-width="2.5"/>
+          <line x1="492" y1="380" x2="492" y2="628" stroke="var(--ink)" stroke-width="2.5"/>
+          <line x1="500" y1="380" x2="500" y2="628" stroke="var(--ink)" stroke-width="2.5"/>
+          <line x1="508" y1="380" x2="508" y2="628" stroke="var(--ink)" stroke-width="2.5"/>
+          <line x1="521" y1="380" x2="521" y2="628" stroke="var(--ink)" stroke-width="2.5"/>
+          <line x1="534" y1="380" x2="534" y2="628" stroke="var(--ink)" stroke-width="2.5"/>
+          <line x1="547" y1="380" x2="547" y2="628" stroke="var(--ink)" stroke-width="2.5"/>
+          <line x1="442" y1="445" x2="558" y2="445" stroke="var(--ink)" stroke-width="2"/>
+          <line x1="442" y1="485" x2="558" y2="485" stroke="var(--ink)" stroke-width="2"/>
+          <line x1="442" y1="525" x2="558" y2="525" stroke="var(--ink)" stroke-width="2"/>
+          <line x1="442" y1="565" x2="558" y2="565" stroke="var(--ink)" stroke-width="2"/>
+          <line x1="442" y1="605" x2="558" y2="605" stroke="var(--ink)" stroke-width="2"/>
+        </g>
+        <!-- arch outlines -->
+        <path d="M442,628 L442,410 A58,58 0 0 0 558,410 L558,628" fill="none" stroke="var(--ink)" stroke-width="1.8"/>
+        <path d="M424,410 A76,76 0 0 0 576,410" fill="none" stroke="var(--ink)" stroke-width="2"/>
+        <!-- keystone -->
+        <polygon points="491,334 509,334 515,360 485,360" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.5" stroke-linejoin="round"/>
+        <!-- steps -->
+        <rect x="413" y="612" width="174" height="9" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.2"/>
+        <rect x="400" y="621" width="200" height="7" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.2"/>
+
+        <!-- ═══ RIGHT WING ═══ -->
+        <rect x="718" y="226" width="130" height="402" fill="var(--stone)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/>
+        <polygon points="710,230 857,230 783,138" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/>
+        <polygon points="710,230 857,230 783,138" fill="url(#slates)"/>
+        <polygon points="758,207 804,207 781,174" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.5" stroke-linejoin="round"/>
+        <rect x="764" y="193" width="34" height="18" fill="var(--bg)" stroke="var(--ink)" stroke-width="1"/>
+        <path d="M758,376 L758,274 A35,35 0 0 0 828,274 L828,376 Z" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
+        <path d="M758,508 L758,408 A35,35 0 0 0 828,408 L828,508 Z" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
+
+        <!-- ═══ RIGHT TOWER ═══ -->
+        <rect x="846" y="148" width="116" height="480" fill="var(--stone)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/>
+        <polygon points="838,152 970,152 904,36" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/>
+        <polygon points="838,152 970,152 904,36" fill="url(#slates)"/>
+        <line x1="904" y1="36" x2="904" y2="8" stroke="var(--ink)" stroke-width="1.5"/>
+        <polygon points="904,8 930,15 904,22" fill="var(--wine)"/>
+        <rect x="846" y="152" width="13" height="8" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="0.7"/>
+        <rect x="949" y="152" width="13" height="8" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="0.7"/>
+        <rect x="846" y="178" width="13" height="8" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="0.7"/>
+        <rect x="949" y="178" width="13" height="8" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="0.7"/>
+        <rect x="846" y="204" width="13" height="8" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="0.7"/>
+        <rect x="949" y="204" width="13" height="8" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="0.7"/>
+        <path d="M881,278 L881,210 A22,22 0 0 0 925,210 L925,278 Z" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
+        <path d="M881,385 L881,317 A22,22 0 0 0 925,317 L925,385 Z" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
+        <path d="M881,495 L881,427 A22,22 0 0 0 925,427 L925,495 Z" fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
+
+        <!-- ground -->
+        <rect x="0" y="622" width="1000" height="6" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.5"/>
+      </svg>
+    </div>
+
+    <!-- ── INTERIOR ── -->
+    <div class="interior" id="interior">
+      <!-- Vault ceiling illustration -->
+      <svg class="vault-svg" viewBox="0 0 820 190" xmlns="http://www.w3.org/2000/svg" fill="none">
+        <!-- Stone surround -->
+        <rect x="0" y="0" width="820" height="190" fill="var(--stone)"/>
+        <!-- Main arch opening -->
+        <path d="M75,190 L75,92 Q410,4 745,92 L745,190 Z" fill="var(--bg)"/>
+        <!-- Rib lines -->
+        <path d="M75,92 Q410,4 745,92" stroke="var(--ink)" stroke-width="2.5"/>
+        <path d="M108,128 Q410,34 712,128" stroke="var(--ink)" stroke-width="1.5" opacity="0.5"/>
+        <path d="M140,164 Q410,64 680,164" stroke="var(--ink)" stroke-width="1" opacity="0.32"/>
+        <!-- Side pilasters -->
+        <line x1="75" y1="0" x2="75" y2="190" stroke="var(--ink)" stroke-width="2.5"/>
+        <line x1="745" y1="0" x2="745" y2="190" stroke="var(--ink)" stroke-width="2.5"/>
+        <!-- Voussoir tick marks on arch -->
+        <g stroke="var(--ink)" stroke-width="1.2" opacity="0.5">
+          <line x1="105" y1="96"  x2="90"  y2="79"/>
+          <line x1="170" y1="54"  x2="157" y2="34"/>
+          <line x1="260" y1="22"  x2="252" y2="1"/>
+          <line x1="715" y1="96"  x2="730" y2="79"/>
+          <line x1="650" y1="54"  x2="663" y2="34"/>
+          <line x1="740" y1="22"  x2="748" y2="1"/>
+        </g>
+        <!-- Small stone blocks in side walls -->
+        <g stroke="var(--ink)" stroke-width="0.8" opacity="0.3">
+          <line x1="0" y1="48" x2="76" y2="48"/>
+          <line x1="0" y1="96" x2="76" y2="96"/>
+          <line x1="0" y1="144" x2="76" y2="144"/>
+          <line x1="744" y1="48" x2="820" y2="48"/>
+          <line x1="744" y1="96" x2="820" y2="96"/>
+          <line x1="744" y1="144" x2="820" y2="144"/>
+        </g>
+      </svg>
+
+      <p class="choice-intro">Que souhaitez-vous découvrir ?</p>
+
+      <div class="choices">
+        <a href="https://www.lechateaudefontenay.fr/vins/" class="choice-card wine" target="_blank">
+          <svg class="choice-icon" viewBox="0 0 50 66" xmlns="http://www.w3.org/2000/svg"
+               fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <!-- Wine glass -->
+            <path d="M14,6 L36,6 C36,6 39,28 25,37 C11,28 14,6 14,6 Z"/>
+            <line x1="25" y1="37" x2="25" y2="56"/>
+            <line x1="14" y1="56" x2="36" y2="56"/>
+            <!-- small grape cluster hint -->
+            <circle cx="22" cy="22" r="2.5" stroke-width="1" opacity="0.5"/>
+            <circle cx="28" cy="22" r="2.5" stroke-width="1" opacity="0.5"/>
+            <circle cx="25" cy="17" r="2.5" stroke-width="1" opacity="0.5"/>
+          </svg>
+          <h2>Les Vins</h2>
+          <p>Grands crus de Bourgogne</p>
+        </a>
+
+        <div class="divider-line"></div>
+
+        <a href="https://www.lechateaudefontenay.fr/sejour/" class="choice-card stay" target="_blank">
+          <svg class="choice-icon" viewBox="0 0 50 66" xmlns="http://www.w3.org/2000/svg"
+               fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <!-- Arched window = stay icon -->
+            <path d="M12,58 L12,30 A13,13 0 0 1 38,30 L38,58"/>
+            <line x1="10" y1="58" x2="40" y2="58"/>
+            <!-- cross bars -->
+            <line x1="25" y1="28" x2="25" y2="58" stroke-width="1" opacity="0.45"/>
+            <line x1="12" y1="43" x2="38" y2="43" stroke-width="1" opacity="0.45"/>
+          </svg>
+          <h2>Séjourner</h2>
+          <p>Chambres &amp; suites d'exception</p>
+        </a>
+      </div>
+    </div>
+
+    <button class="back-btn" id="backBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+      &#8592;&ensp;Retour
+    </button>
+
+  </div>
+</div>
+
+<script>
+const hdr       = document.getElementById('hdr');
+const castleWrap= document.getElementById('castleWrap');
+const castleSvg = document.getElementById('castleSvg');
+const interior  = document.getElementById('interior');
+const backBtn   = document.getElementById('backBtn');
+const driver    = document.getElementById('driver');
+
+function eio(t){ return t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2; }
+
+let raf = null;
+function onScroll(){
+  if(raf) return;
+  raf = requestAnimationFrame(()=>{
+    raf=null;
+    const p = Math.max(0, Math.min(window.scrollY / (driver.offsetHeight - window.innerHeight), 1));
+
+    hdr.style.opacity         = Math.max(0, 1 - p*6).toFixed(3);
+    castleSvg.style.transform = `scale(${1 + eio(Math.min(p/.75,1)) * 13})`;
+    castleWrap.style.opacity  = (p < .52 ? 1 : Math.max(0, 1-(p-.52)/.2)).toFixed(3);
+
+    const iOp = p < .72 ? 0 : Math.min(1,(p-.72)/.22);
+    interior.style.opacity    = iOp.toFixed(3);
+    interior.style.pointerEvents = iOp>.5 ? 'all' : 'none';
+    backBtn.style.opacity     = iOp.toFixed(3);
+    backBtn.style.pointerEvents = iOp>.5 ? 'all' : 'none';
+  });
+}
+
+window.addEventListener('scroll', onScroll, { passive:true });
+onScroll();
+</script>
