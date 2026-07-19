@@ -509,25 +509,31 @@ body { background: var(--bg); color: var(--ink); font-family: Georgia, serif; }
       <line x1="552" y1="545" x2="600" y2="545" stroke="var(--ink)" stroke-width="0.8"/>
 
       <!-- ENTRANCE DOOR -->
-      <path d="M453,643 L453,526 Q453,500 500,494 Q547,500 547,526 L547,643 Z"
+      <!-- Stone surround: straight sides + arch top, peak at y=500 -->
+      <path d="M450,643 L450,528 Q450,496 500,490 Q550,496 550,528 L550,643 Z"
             fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="2"/>
-      <path d="M466,643 L466,530 Q466,512 500,508 Q534,512 534,530 L534,643 Z"
+      <!-- Door opening: inner arch, same peak -->
+      <path d="M464,643 L464,532 Q464,514 500,508 Q536,514 536,532 L536,643 Z"
             fill="var(--bg)" stroke="var(--ink)" stroke-width="1.5"/>
-      <path d="M462,499 Q462,480 480,474 Q500,470 520,474 Q538,480 538,499"
+      <!-- Cartouche base — starts exactly at arch peak y=490, continuous with surround -->
+      <path d="M450,506 Q450,490 500,490 Q550,490 550,506
+               Q550,490 560,482 Q560,468 548,462 Q534,456 500,454
+               Q466,456 452,462 Q440,468 440,482 Q440,490 450,506 Z"
             fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.5"/>
-      <path d="M470,475 Q470,460 488,456 Q500,454 512,456 Q530,460 530,475"
-            fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.2"/>
-      <ellipse cx="500" cy="468" rx="14" ry="10" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1"/>
-      <ellipse cx="500" cy="468" rx="7" ry="5" fill="var(--bg)" stroke="var(--ink)" stroke-width="0.8"/>
-      <path d="M455,499 Q448,493 451,485 Q454,477 462,478" fill="none" stroke="var(--ink)" stroke-width="1.2"/>
-      <path d="M545,499 Q552,493 549,485 Q546,477 538,478" fill="none" stroke="var(--ink)" stroke-width="1.2"/>
+      <!-- Oval medallion centered in cartouche -->
+      <ellipse cx="500" cy="472" rx="14" ry="10" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.2"/>
+      <ellipse cx="500" cy="472" rx="7" ry="5" fill="var(--bg)" stroke="var(--ink)" stroke-width="0.9"/>
+      <!-- Door steps -->
       <rect x="443" y="635" width="114" height="8" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.2"/>
       <rect x="434" y="643" width="132" height="7" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.2"/>
-      <line x1="500" y1="530" x2="500" y2="635" stroke="var(--ink)" stroke-width="1" opacity="0.5"/>
+      <!-- Door centre split -->
+      <line x1="500" y1="532" x2="500" y2="635" stroke="var(--ink)" stroke-width="1" opacity="0.5"/>
+      <!-- Door panels -->
       <rect x="470" y="548" width="24" height="34" rx="1" fill="none" stroke="var(--ink)" stroke-width="0.8" opacity="0.6"/>
       <rect x="506" y="548" width="24" height="34" rx="1" fill="none" stroke="var(--ink)" stroke-width="0.8" opacity="0.6"/>
       <rect x="470" y="586" width="24" height="34" rx="1" fill="none" stroke="var(--ink)" stroke-width="0.8" opacity="0.6"/>
       <rect x="506" y="586" width="24" height="34" rx="1" fill="none" stroke="var(--ink)" stroke-width="0.8" opacity="0.6"/>
+      <!-- Door knobs -->
       <circle cx="494" cy="590" r="2.5" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1"/>
       <circle cx="506" cy="590" r="2.5" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1"/>
     </svg>
