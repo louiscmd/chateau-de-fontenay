@@ -54,24 +54,25 @@ body { background: var(--bg); color: var(--ink); font-family: Georgia, serif; }
   line-height: 1.04; letter-spacing: -0.01em;
 }
 .click-cue {
-  position: absolute; top: clamp(1.4rem, 3.5vh, 2.5rem); right: clamp(1.4rem, 3.5vw, 3rem);
-  opacity: 0.45; text-align: right;
+  position: absolute; top: 50%; right: clamp(1.5rem, 4vw, 3.5rem);
+  transform: translateY(-50%);
+  opacity: 0.5; text-align: right;
   transition: opacity 0.3s; animation: pulse 3s ease-in-out infinite;
   pointer-events: none;
 }
 .click-cue-label {
-  font-family: Georgia, serif; font-size: clamp(0.85rem, 1.4vw, 1.1rem);
-  font-style: italic; letter-spacing: 0.01em; display: block; margin-bottom: 0.3rem;
+  font-family: Georgia, serif; font-size: clamp(1rem, 1.6vw, 1.3rem);
+  font-style: italic; letter-spacing: 0.01em; display: block; margin-bottom: 0.6rem;
 }
 .click-cue-arrow {
   display: block; margin-left: auto;
 }
 @keyframes pulse {
-  0%,100% { opacity: .38; } 50% { opacity: .6; }
+  0%,100% { opacity: .4; } 50% { opacity: .65; }
 }
 @keyframes float-arrow {
-  0%,100% { transform: translateY(0); }
-  50% { transform: translateY(5px); }
+  0%,100% { transform: translateX(0); }
+  50% { transform: translateX(-5px); }
 }
 
 .castle-wrap {
@@ -534,9 +535,9 @@ body { background: var(--bg); color: var(--ink); font-family: Georgia, serif; }
 
   <div class="click-cue">
     <span class="click-cue-label">Cliquez pour entrer</span>
-    <svg class="click-cue-arrow" width="54" height="52" viewBox="0 0 54 52" fill="none" xmlns="http://www.w3.org/2000/svg" style="animation: float-arrow 2s ease-in-out infinite;">
-      <path d="M48 4 C44 18, 28 28, 10 44" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/>
-      <path d="M10 44 L8 35 M10 44 L19 40" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+    <svg class="click-cue-arrow" width="70" height="40" viewBox="0 0 70 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="animation: float-arrow 2s ease-in-out infinite;">
+      <path d="M66 8 C50 10, 28 18, 8 28" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+      <path d="M8 28 L16 24 M8 28 L12 36" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/>
     </svg>
   </div>
 </div>
