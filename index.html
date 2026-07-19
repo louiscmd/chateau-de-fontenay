@@ -54,14 +54,24 @@ body { background: var(--bg); color: var(--ink); font-family: Georgia, serif; }
   line-height: 1.04; letter-spacing: -0.01em;
 }
 .click-cue {
-  position: absolute; bottom: clamp(1.5rem, 4vh, 3rem); left: 0; right: 0;
-  font-family: system-ui, sans-serif; font-size: 0.6rem;
-  letter-spacing: 0.26em; text-transform: uppercase;
-  opacity: 0.3; text-align: center;
+  position: absolute; top: clamp(1.2rem, 3vh, 2rem); right: clamp(1.2rem, 3vw, 2.5rem);
+  font-family: system-ui, sans-serif; font-size: 0.58rem;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  opacity: 0.35; text-align: right;
   transition: opacity 0.3s; animation: pulse 3s ease-in-out infinite;
+  display: flex; flex-direction: column; align-items: flex-end; gap: 0.35rem;
+}
+.click-cue-arrow {
+  display: block; font-size: 1.4rem; line-height: 1;
+  animation: bounce-arrow 1.8s ease-in-out infinite;
+  transform-origin: center;
 }
 @keyframes pulse {
   0%,100% { opacity: .28; } 50% { opacity: .5; }
+}
+@keyframes bounce-arrow {
+  0%,100% { transform: translateY(0) rotate(45deg); }
+  50% { transform: translateY(4px) rotate(45deg); }
 }
 
 .castle-wrap {
@@ -132,13 +142,13 @@ body { background: var(--bg); color: var(--ink); font-family: Georgia, serif; }
 }
 
 .content-inner {
-  width: min(88vw, 780px); margin: 0 auto;
-  padding: clamp(3rem, 8vh, 6rem) 0 clamp(3rem, 6vh, 5rem);
+  width: min(92vw, 1200px); margin: 0 auto;
+  padding: clamp(4rem, 10vh, 8rem) 0 clamp(4rem, 8vh, 7rem);
 }
 
 .back-row {
   display: flex; align-items: center; gap: 0.6rem;
-  margin-bottom: 3rem;
+  margin-bottom: 4rem;
 }
 .back-btn {
   font-family: system-ui, sans-serif; font-size: 0.58rem;
@@ -162,69 +172,69 @@ body { background: var(--bg); color: var(--ink); font-family: Georgia, serif; }
 .content-title.stay-color { color: var(--ivy); }
 
 .content-lead {
-  font-size: clamp(0.95rem, 1.8vw, 1.1rem); line-height: 1.75;
-  opacity: 0.75; max-width: 58ch; margin-bottom: 3rem;
+  font-size: clamp(1rem, 1.8vw, 1.2rem); line-height: 1.8;
+  opacity: 0.75; max-width: 72ch; margin-bottom: 4rem;
 }
 
 .divider-rule {
   border: none; border-top: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
-  margin-bottom: 2.8rem;
+  margin-bottom: 4rem;
 }
 
 .cards {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 1px; background: color-mix(in srgb, var(--ink) 10%, transparent);
-  margin-bottom: 2.8rem;
+  margin-bottom: 4rem;
 }
 .card {
-  background: var(--bg); padding: 1.6rem 1.4rem;
+  background: var(--bg); padding: 2.4rem 2rem;
 }
 .card-label {
-  font-family: system-ui, sans-serif; font-size: 0.56rem;
+  font-family: system-ui, sans-serif; font-size: 0.58rem;
   letter-spacing: 0.24em; text-transform: uppercase; opacity: 0.35;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.7rem;
 }
-.card h3 { font-size: 1rem; font-weight: 400; margin-bottom: 0.4rem; }
-.card p  { font-family: system-ui, sans-serif; font-size: 0.78rem; line-height: 1.6; opacity: 0.6; }
+.card h3 { font-size: 1.15rem; font-weight: 400; margin-bottom: 0.6rem; }
+.card p  { font-family: system-ui, sans-serif; font-size: 0.85rem; line-height: 1.7; opacity: 0.6; }
 
 .section-heading {
-  font-size: clamp(0.85rem, 1.5vw, 1rem); font-weight: 400;
-  letter-spacing: 0.04em; margin-bottom: 0.4rem; margin-top: 2rem;
+  font-size: clamp(1rem, 1.8vw, 1.25rem); font-weight: 400;
+  letter-spacing: 0.04em; margin-bottom: 0.6rem; margin-top: 3rem;
 }
 .section-note {
-  font-family: system-ui, sans-serif; font-size: 0.6rem;
-  letter-spacing: 0.1em; opacity: 0.42; margin-bottom: 1rem;
+  font-family: system-ui, sans-serif; font-size: 0.65rem;
+  letter-spacing: 0.1em; opacity: 0.42; margin-bottom: 1.6rem;
 }
 .tarif-note {
-  font-family: system-ui, sans-serif; font-size: 0.58rem;
-  letter-spacing: 0.06em; opacity: 0.4; margin-top: 0.8rem; margin-bottom: 0.5rem;
+  font-family: system-ui, sans-serif; font-size: 0.62rem;
+  letter-spacing: 0.06em; opacity: 0.4; margin-top: 1.2rem; margin-bottom: 1rem;
 }
-.cards-4 { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+.cards-4 { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
 .card-price {
-  font-family: system-ui, sans-serif; font-size: 0.65rem;
-  margin-top: 0.6rem; opacity: 0.6; letter-spacing: 0.04em;
+  font-family: system-ui, sans-serif; font-size: 0.72rem;
+  margin-top: 0.9rem; opacity: 0.6; letter-spacing: 0.04em;
 }
 .card-accolade {
-  font-family: system-ui, sans-serif; font-size: 0.6rem;
-  margin-top: 0.5rem; opacity: 0.5; letter-spacing: 0.02em;
+  font-family: system-ui, sans-serif; font-size: 0.62rem;
+  margin-top: 0.7rem; opacity: 0.5; letter-spacing: 0.02em;
   font-style: italic;
 }
 .amenities-row {
-  display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 2rem;
+  display: flex; flex-wrap: wrap; gap: 0.65rem; margin-bottom: 3rem;
 }
 .amenity {
-  font-family: system-ui, sans-serif; font-size: 0.58rem;
+  font-family: system-ui, sans-serif; font-size: 0.62rem;
   letter-spacing: 0.1em; text-transform: uppercase;
   border: 1px solid color-mix(in srgb, var(--ink) 18%, transparent);
-  padding: 0.3rem 0.65rem; opacity: 0.65;
+  padding: 0.45rem 0.9rem; opacity: 0.65;
 }
 .contact-row {
   display: grid; grid-template-columns: 1fr 1fr;
-  gap: 1.5rem; margin-bottom: 2rem;
+  gap: 3rem; margin-bottom: 3rem;
 }
 .contact-detail {
-  font-family: system-ui, sans-serif; font-size: 0.75rem;
-  line-height: 1.7; opacity: 0.65;
+  font-family: system-ui, sans-serif; font-size: 0.9rem;
+  line-height: 1.9; opacity: 0.65;
 }
 .contact-detail a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
 .cta-link {
@@ -254,7 +264,6 @@ body { background: var(--bg); color: var(--ink); font-family: Georgia, serif; }
 <div class="scene" id="entry" onclick="enter()">
 
   <header class="entry-header" id="entryHeader">
-    <p class="eyebrow">Bourgogne &middot; France</p>
     <h1 class="castle-title">Château<br>de Fontenay</h1>
   </header>
 
@@ -347,13 +356,6 @@ body { background: var(--bg); color: var(--ink); font-family: Georgia, serif; }
       <line x1="503" y1="4" x2="503" y2="-10" stroke="var(--ink)" stroke-width="1.5"/>
       <circle cx="503" cy="-10" r="3.5" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.2"/>
       <circle cx="503" cy="-2" r="2.5" fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.2"/>
-      <g fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1">
-        <ellipse cx="453" cy="64" rx="5" ry="4" transform="rotate(-28 453 64)"/>
-        <ellipse cx="427" cy="94" rx="5" ry="4" transform="rotate(-28 427 94)"/>
-        <ellipse cx="547" cy="64" rx="5" ry="4" transform="rotate(28 547 64)"/>
-        <ellipse cx="573" cy="94" rx="5" ry="4" transform="rotate(28 573 94)"/>
-      </g>
-
       <!-- CHIMNEYS -->
       <g fill="var(--stone-dk)" stroke="var(--ink)" stroke-width="1.5" stroke-linejoin="round">
         <rect x="100" y="88" width="22" height="55"/><rect x="97" y="85" width="28" height="8"/>
@@ -536,7 +538,7 @@ body { background: var(--bg); color: var(--ink); font-family: Georgia, serif; }
     </svg>
   </div>
 
-  <p class="click-cue">Cliquez pour entrer</p>
+  <p class="click-cue"><span class="click-cue-arrow">↘</span>Cliquez pour entrer</p>
 </div>
 
 
