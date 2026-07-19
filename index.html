@@ -154,17 +154,31 @@ body { background: var(--bg); color: var(--ink); font-family: Georgia, serif; }
 }
 
 .back-row {
-  display: flex; align-items: center; gap: 0.6rem;
+  display: flex; align-items: center; justify-content: center;
   margin-bottom: 4rem;
 }
 .back-btn {
-  font-family: system-ui, sans-serif; font-size: 0.58rem;
+  font-family: system-ui, sans-serif; font-size: 0.7rem;
   letter-spacing: 0.2em; text-transform: uppercase;
   background: none; border: 1px solid color-mix(in srgb, var(--ink) 25%, transparent);
-  color: var(--ink); padding: 0.4rem 0.8rem; cursor: pointer;
+  color: var(--ink); padding: 0.75rem 2rem; cursor: pointer;
   transition: background 0.2s;
 }
 .back-btn:hover { background: var(--stone); }
+
+/* ── Exit / Picker nav ── */
+.picker-nav {
+  position: absolute; top: clamp(1.4rem, 4vh, 2.5rem); left: 0; right: 0;
+  display: flex; justify-content: center;
+}
+.exit-btn {
+  font-family: system-ui, sans-serif; font-size: 0.7rem;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  background: none; border: 1px solid color-mix(in srgb, var(--ink) 25%, transparent);
+  color: var(--ink); padding: 0.75rem 2rem; cursor: pointer;
+  transition: background 0.2s;
+}
+.exit-btn:hover { background: var(--stone); }
 
 .content-eyebrow {
   font-family: system-ui, sans-serif; font-size: 0.6rem;
@@ -581,6 +595,9 @@ body { background: var(--bg); color: var(--ink); font-family: Georgia, serif; }
 
 <!-- ══════════ PICKER SCENE ══════════ -->
 <div class="scene hidden" id="picker">
+  <div class="picker-nav">
+    <button class="exit-btn" onclick="goEntry()">&#8592;&ensp;Sortir du château</button>
+  </div>
   <p class="picker-label">Que souhaitez-vous découvrir&nbsp;?</p>
   <div class="choices">
     <button class="choice-btn wine" onclick="showSection('wine')">
@@ -846,5 +863,11 @@ function showSection(which) {
 
 function goBack() {
   showScene(pickerEl);
+}
+
+function goEntry() {
+  svgEl.classList.remove('zooming');
+  hdrEl.style.opacity = '1';
+  showScene(entryEl);
 }
 </script>
